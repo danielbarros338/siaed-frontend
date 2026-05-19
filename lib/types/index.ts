@@ -42,3 +42,17 @@ export interface UserSession {
 export interface ApiErrorResponse {
   errors: string[]
 }
+
+export interface PagedResult<T> {
+  items: T[]
+  totalCount: number
+  page: number
+  pageSize: number
+  totalPages: number
+}
+
+export type StudentStatus = 1 | 2 | 3
+// 1 = Ativo | 2 = Inativo | 3 = Evadido
+
+export type DocumentType = 1 | 2 | 3
+// 1 = CPF | 2 = RegistroEstrangeiro | 3 = IdInterno
