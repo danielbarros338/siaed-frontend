@@ -22,6 +22,10 @@ export function extractApiErrors(error: unknown): string[] {
       return ['Não foi possível conectar ao servidor. Tente novamente.']
     }
 
+    if (error.response?.status === 401) {
+      return ['E-mail ou senha incorretos.']
+    }
+
     const errors = error.response?.data?.errors
     if (Array.isArray(errors) && errors.length > 0) {
       return errors as string[]

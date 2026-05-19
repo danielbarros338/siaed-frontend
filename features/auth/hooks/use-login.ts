@@ -15,7 +15,7 @@ export function useLogin() {
     mutationFn: (dto: LoginDto) => authApi.login(dto),
     onSuccess: (response) => {
       persistSession(response, setUser)
-      router.push('/dashboard')
+      router.push('/')
     },
     onError: () => {
       // errors are exposed via mutation.error — handled in the form component

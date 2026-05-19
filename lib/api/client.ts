@@ -18,13 +18,16 @@ apiClient.interceptors.request.use((config) => {
   return config
 })
 
-// Redireciona para login em 401
+// Redireciona para login em 401 apenas quando há sessão ativa (token expirado/inválido)
 apiClient.interceptors.response.use(
   (res) => res,
   (error) => {
     if (error.response?.status === 401 && typeof window !== 'undefined') {
-      clearAuthCookie()
-      window.location.href = '/login'
+      const token = getTokenFromCookie()
+      if (token) {
+        clearAuthCookie()
+        window.location.href = '/login'
+      }
     }
     return Promise.reject(error)
   },

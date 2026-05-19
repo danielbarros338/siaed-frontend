@@ -10,7 +10,7 @@ export default async function AuthLayout({
   const token = cookieStore.get('siaed_token')
 
   if (token) {
-    redirect('/dashboard')
+    redirect('/')
   }
 
   return (
