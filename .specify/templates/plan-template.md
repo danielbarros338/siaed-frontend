@@ -40,7 +40,19 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+Verify compliance with `.specify/memory/constitution.md` before proceeding:
+
+- [ ] **P-II** Fonte única de verdade: nenhum campo/enum inventado fora de `docs/backend-state.md`
+- [ ] **P-IV** Separação de responsabilidades: sem API calls em UI, sem lógica em `page.tsx`
+- [ ] **P-V** Feature-based structure: domínio usa `features/<domain>/{components,hooks,queries,...}`
+- [ ] **P-VII** Next.js rules: `params` como `Promise`, sem Pages Router
+- [ ] **P-VIII** Contrato de API: `PagedResult<T>`, erros como `{ errors: string[] }`, enums numéricos
+- [ ] **P-IX** Auth JWT: token em cookie seguro, interceptor Axios, sem token em `localStorage`
+- [ ] **P-X** Formulários: React Hook Form + Zod, schema separado, feedback por campo
+- [ ] **P-XI** TanStack Query: `queryKey` estruturada, invalidação após mutation
+- [ ] **P-XIV** Segurança/LGPD: dados mascarados, sem tokens em logs ou `NEXT_PUBLIC_*`
+- [ ] **P-XV** Tipagem: TypeScript estrito, sem `any`, alias `@/`
+- [ ] **P-XVII** Regra Final: alinhado ao backend, consistente, escalável, previsível, seguro
 
 ## Project Structure
 
