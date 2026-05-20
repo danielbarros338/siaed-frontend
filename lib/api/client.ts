@@ -4,7 +4,7 @@ import axios from 'axios'
 export const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5248',
   headers: { 'Content-Type': 'application/json' },
-  timeout: 10000,
+  timeout: 30000,
 })
 
 // Injeta o token JWT em cada requisição

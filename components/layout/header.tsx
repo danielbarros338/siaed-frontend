@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const NAV_ITEMS = [
+  { href: '/lesson-plans', label: 'Planos de Aula' },
   { href: '/classes', label: 'Turmas' },
   { href: '/students', label: 'Estudantes' },
 ] as const
@@ -34,7 +35,7 @@ export function Header() {
               {NAV_ITEMS.map((item) => {
                 const isActive =
                   pathname === item.href ||
-                  (item.href !== '/' && pathname.startsWith(`${item.href}/`))
+                  pathname.startsWith(`${item.href}/`)
 
                 return (
                   <li key={item.href}>

@@ -60,6 +60,70 @@ export type DocumentType = 1 | 2 | 3
 export type ClassStatus = 1 | 2
 // 1 = Active | 2 = Inactive
 
+export type LessonPlanStatus = 1 | 2 | 3
+// 1 = Draft | 2 = Published | 3 = Archived
+
+export interface LessonPlan {
+  id: string
+  teacherId: string
+  title: string
+  subject: string
+  grade: string
+  durationMinutes: number
+  objectives: string
+  content: string
+  methodology: string
+  resources: string
+  evaluation: string
+  ageRange: string
+  isAIGenerated: boolean
+  status: LessonPlanStatus
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateLessonPlanDto {
+  teacherId: string
+  title: string
+  subject: string
+  grade: string
+  durationMinutes: number
+  objectives: string
+  content: string
+  methodology: string
+  resources: string
+  evaluation: string
+  ageRange: string
+}
+
+export interface GenerateLessonPlanDto {
+  teacherId: string
+  subject: string
+  grade: string
+  ageRange: string
+  durationMinutes: number
+  additionalInstructions?: string
+}
+
+export interface UpdateLessonPlanDto {
+  id: string
+  requestingUserId: string
+  title: string
+  objectives: string
+  content: string
+  methodology: string
+  resources: string
+  evaluation: string
+}
+
+export interface LessonPlansListParams {
+  teacherId: string
+  page?: number
+  pageSize?: number
+  status?: 'Draft' | 'Published' | 'Archived'
+  isAIGenerated?: boolean
+}
+
 export const CLASS_STATUS_LABELS: Record<ClassStatus, string> = {
   1: 'Ativa',
   2: 'Inativa',
