@@ -53,6 +53,8 @@ describe('classes hooks', () => {
       page: 1,
       pageSize: 20,
       totalPages: 1,
+      hasNextPage: false,
+      hasPreviousPage: false,
     })
 
     const { result } = renderHook(

@@ -42,16 +42,22 @@
 
 Verify compliance with `.specify/memory/constitution.md` before proceeding:
 
+- [ ] **P-I** Sistema SaaS educacional crítico: solução prioriza consistência, clareza, previsibilidade e escalabilidade
 - [ ] **P-II** Fonte única de verdade: nenhum campo/enum inventado fora de `docs/backend-state.md`
+- [ ] **P-III** Arquitetura orientada a domínio: escopo espelha um domínio real do backend
 - [ ] **P-IV** Separação de responsabilidades: sem API calls em UI, sem lógica em `page.tsx`
 - [ ] **P-V** Feature-based structure: domínio usa `features/<domain>/{components,hooks,queries,...}`
+- [ ] **P-VI** Camadas obrigatórias: dependências fluem de UI → Application → Data
 - [ ] **P-VII** Next.js rules: `params` como `Promise`, sem Pages Router
 - [ ] **P-VIII** Contrato de API: `PagedResult<T>`, erros como `{ errors: string[] }`, enums numéricos
 - [ ] **P-IX** Auth JWT: token em cookie seguro, interceptor Axios, sem token em `localStorage`
 - [ ] **P-X** Formulários: React Hook Form + Zod, schema separado, feedback por campo
 - [ ] **P-XI** TanStack Query: `queryKey` estruturada, invalidação após mutation
+- [ ] **P-XII** UI/UX e design system: uso consistente de shadcn/ui + Tailwind com feedback completo de estado
+- [ ] **P-XIII** Performance e bundle: evitar re-renders, waterfalls e dependências desnecessárias
 - [ ] **P-XIV** Segurança/LGPD: dados mascarados, sem tokens em logs ou `NEXT_PUBLIC_*`
 - [ ] **P-XV** Tipagem: TypeScript estrito, sem `any`, alias `@/`
+- [ ] **P-XVI** Escalabilidade por design: solução não pode otimizar apenas para o estado atual
 - [ ] **P-XVII** Regra Final: alinhado ao backend, consistente, escalável, previsível, seguro
 
 ## Project Structure

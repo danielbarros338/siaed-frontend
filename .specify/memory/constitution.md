@@ -141,8 +141,10 @@ Dependências inversas são PROIBIDAS.
 
 - Toda comunicação com o backend DEVE respeitar nomes de propriedades, tipos
   exatos e enums numéricos conforme `docs/backend-state.md`
-- Toda listagem DEVE seguir `PagedResult<T>` com os campos:
-  `items`, `totalCount`, `page`, `pageSize`, `totalPages`
+- Toda listagem DEVE seguir `PagedResult<T>` com os campos base
+  `items`, `totalCount`, `page`, `pageSize`, `totalPages`, preservando também
+  metadados adicionais expostos pelo backend, como `hasNextPage` e
+  `hasPreviousPage`
 - Erros DEVEM ser tratados como `{ errors: string[] }`
 - Respostas HTTP DEVEM ser tratadas: 401 → logout automático; 403 → acesso
   negado; 404 → not-found; 500 → global error boundary
@@ -157,7 +159,7 @@ Dependências inversas são PROIBIDAS.
 - Token NUNCA deve ser armazenado em `localStorage` como fonte primária
 - Token NUNCA deve ser exposto em logs ou variáveis `NEXT_PUBLIC_*`
 - O interceptor Axios DEVE injetar o token automaticamente e capturar 401
-- Somente `{ id, name, email, role }` podem ser mantidos em `sessionStorage`
+- Somente `{ userId, name, email, role }` podem ser mantidos em `sessionStorage`
 
 ---
 

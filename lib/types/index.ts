@@ -49,6 +49,8 @@ export interface PagedResult<T> {
   page: number
   pageSize: number
   totalPages: number
+  hasNextPage: boolean
+  hasPreviousPage: boolean
 }
 
 export type StudentStatus = 1 | 2 | 3

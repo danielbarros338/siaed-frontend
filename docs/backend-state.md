@@ -1,7 +1,7 @@
 # SIAED Backend — Estado Atual da Implementação
 
 > Documento de referência para desenvolvimento de frontend e geração de documentação via SpecKit.  
-> Gerado em: 18/05/2026  
+> Gerado em: 20/05/2026  
 > Versão da API: v1
 
 ---
@@ -45,6 +45,7 @@ O SIAED Backend é uma plataforma de inteligência operacional para escolas part
 - **Engine**: MySQL
 - **Database**: `siaed`
 - **Host**: `localhost`
+- **Tabelas recentes**: `Classes` e `ClassTeachers` substituem `SchoolClasses`/`SchoolClassTeachers`; `Teachers` foi removida e professores passam a ser `Users` com `role = Professor`
 
 ### Autenticação JWT
 
@@ -52,6 +53,7 @@ O SIAED Backend é uma plataforma de inteligência operacional para escolas part
 - **Issuer / Audience**: `siaed`
 - **Expiração**: 8 horas
 - **Header**: `Authorization: Bearer <token>`
+- **CORS**: política `AllowLocalhost`, aceitando origens `localhost` e `127.0.0.1` com credenciais
 
 ---
 
@@ -86,8 +88,10 @@ Cria um novo usuário no sistema.
 | email    | string   | Sim         | E-mail único                           |
 | password | string   | Sim         | Senha (mínimo 8 caracteres)            |
 | role     | int (enum) | Sim       | 1=Professor, 2=Diretor, 3=Coordenador  |
-| subject  | string   | Não         | Disciplina (para professores)          |
-| schoolId | string   | Não         | ID da escola                           |
+| subject  | string   | Não         | Campo legado no contrato; não é persistido atualmente |
+| schoolId | string   | Não         | Campo legado no contrato; não é persistido atualmente |
+
+> Mudança: o cadastro não cria mais registro em `Teachers`. Para professores, o próprio `User` com `role = 1` passa a ser usado como `teacherId` nos módulos pedagógicos.
 
 **Resposta 200 OK**:
 ```json
@@ -97,7 +101,7 @@ Cria um novo usuário no sistema.
   "email": "string",
   "role": 1,
   "token": "string (JWT)",
-  "expiresAt": "2026-05-18T20:00:00Z"
+  "expiresAt": "2026-05-20T20:00:00Z"
 }
 ```
 
@@ -128,7 +132,7 @@ Autentica um usuário existente.
   "email": "string",
   "role": 1,
   "token": "string (JWT)",
-  "expiresAt": "2026-05-18T20:00:00Z"
+  "expiresAt": "2026-05-20T20:00:00Z"
 }
 ```
 
@@ -140,20 +144,52 @@ Autentica um usuário existente.
 
 Requer `[Authorize]`.
 
+> Mudança em relação ao estado anterior: não existe mais entidade/tabela `Teacher` separada. Professores agora são usuários (`User`) com `role = Professor`; portanto, o `id` retornado aqui é o próprio `userId`.
+
+#### `GET /api/v1/teachers`
+
+Lista usuários com perfil de professor, com paginação e busca.
+
+**Query Parameters**:
+| Parâmetro | Tipo   | Obrigatório | Default | Descrição                    |
+|-----------|--------|-------------|---------|------------------------------|
+| page      | int    | Não         | 1       | Página atual                 |
+| pageSize  | int    | Não         | 20      | Itens por página             |
+| search    | string | Não         | null    | Busca por nome ou e-mail     |
+
+**Resposta 200 OK**:
+```json
+{
+  "items": [
+    {
+      "id": "guid",
+      "name": "string",
+      "email": "string",
+      "createdAt": "2026-05-20T00:00:00Z"
+    }
+  ],
+  "totalCount": 0,
+  "page": 1,
+  "pageSize": 20,
+  "totalPages": 0,
+  "hasNextPage": false,
+  "hasPreviousPage": false
+}
+```
+
+---
+
 #### `GET /api/v1/teachers/me`
 
-Retorna o perfil do professor logado (identificado pelo JWT).
+Retorna o perfil do professor logado, identificado pelo JWT.
 
 **Resposta 200 OK**:
 ```json
 {
   "id": "guid",
-  "userId": "guid | null",
   "name": "string",
   "email": "string",
-  "subject": "string",
-  "schoolId": "string",
-  "createdAt": "2026-05-18T00:00:00Z"
+  "createdAt": "2026-05-20T00:00:00Z"
 }
 ```
 
@@ -183,6 +219,8 @@ Cria um plano de aula manualmente.
   "ageRange": "string"
 }
 ```
+
+> `teacherId` deve ser o `id` do usuário com `role = Professor`.
 
 **Resposta 201 Created**:
 ```json
@@ -246,8 +284,8 @@ Lista planos de aula com paginação.
       "ageRange": "string",
       "isAIGenerated": false,
       "status": 1,
-      "createdAt": "2026-05-18T00:00:00Z",
-      "updatedAt": "2026-05-18T00:00:00Z"
+      "createdAt": "2026-05-20T00:00:00Z",
+      "updatedAt": "2026-05-20T00:00:00Z"
     }
   ],
   "totalCount": 100,
@@ -276,7 +314,6 @@ Atualiza um plano de aula.
 ```json
 {
   "id": "guid",
-  "requestingUserId": "guid",
   "title": "string",
   "objectives": "string",
   "content": "string",
@@ -288,6 +325,8 @@ Atualiza um plano de aula.
 
 **Resposta 204 No Content**.  
 **Resposta 404 Not Found** | **400 Bad Request**.
+
+> Mudança: `requestingUserId` é obtido do JWT no controller e sobrescreve qualquer valor enviado no corpo.
 
 ---
 
@@ -400,14 +439,16 @@ Lista atividades com paginação.
       "type": 1,
       "isAIGenerated": false,
       "status": 1,
-      "createdAt": "2026-05-18T00:00:00Z",
-      "updatedAt": "2026-05-18T00:00:00Z"
+      "createdAt": "2026-05-20T00:00:00Z",
+      "updatedAt": "2026-05-20T00:00:00Z"
     }
   ],
   "totalCount": 0,
   "page": 1,
   "pageSize": 10,
-  "totalPages": 0
+  "totalPages": 0,
+  "hasNextPage": false,
+  "hasPreviousPage": false
 }
 ```
 
@@ -426,7 +467,6 @@ Lista atividades com paginação.
 ```json
 {
   "id": "guid",
-  "requestingUserId": "guid",
   "title": "string",
   "description": "string",
   "content": "string"
@@ -434,6 +474,8 @@ Lista atividades com paginação.
 ```
 
 **Resposta 204 No Content**.
+
+> Mudança: `requestingUserId` é obtido do JWT no controller e usado para validar propriedade do recurso.
 
 ---
 
@@ -528,8 +570,8 @@ Lista relatórios com paginação.
       "summary": "string",
       "parentCommunication": "string",
       "isAIGenerated": false,
-      "createdAt": "2026-05-18T00:00:00Z",
-      "updatedAt": "2026-05-18T00:00:00Z"
+      "createdAt": "2026-05-20T00:00:00Z",
+      "updatedAt": "2026-05-20T00:00:00Z"
     }
   ],
   "totalCount": 0,
@@ -554,7 +596,6 @@ Lista relatórios com paginação.
 ```json
 {
   "id": "guid",
-  "requestingUserId": "guid",
   "content": "string",
   "summary": "string",
   "parentCommunication": "string"
@@ -562,6 +603,8 @@ Lista relatórios com paginação.
 ```
 
 **Resposta 204 No Content**.
+
+> Mudança: `requestingUserId` é obtido do JWT no controller e usado em atualização, exclusão, resumo e comunicação com responsáveis.
 
 ---
 
@@ -662,7 +705,9 @@ Lista alunos com paginação e filtros.
   "totalCount": 0,
   "page": 1,
   "pageSize": 20,
-  "totalPages": 0
+  "totalPages": 0,
+  "hasNextPage": false,
+  "hasPreviousPage": false
 }
 ```
 
@@ -685,7 +730,7 @@ Retorna detalhes completos de um aluno.
   "status": 1,
   "enrollmentDate": "2026-02-01",
   "notes": "string | null",
-  "createdAt": "2026-05-18T00:00:00Z"
+  "createdAt": "2026-05-20T00:00:00Z"
 }
 ```
 
@@ -792,9 +837,14 @@ Cria uma turma.
 {
   "name": "string",
   "grade": "string",
-  "schoolYear": 2026
+  "schoolYear": 2026,
+  "teacherIds": ["guid"]
 }
 ```
+
+| Campo      | Tipo        | Obrigatório | Descrição                                      |
+|------------|-------------|-------------|------------------------------------------------|
+| teacherIds | guid[]      | Não         | IDs de usuários com `role = Professor` associados à turma |
 
 **Resposta 201 Created**: `{ "id": "guid" }`.
 
@@ -842,7 +892,15 @@ Lista turmas com paginação.
   "grade": "string",
   "schoolYear": 2026,
   "status": 1,
-  "createdAt": "2026-05-18T00:00:00Z"
+  "createdAt": "2026-05-20T00:00:00Z",
+  "teachers": [
+    {
+      "id": "guid",
+      "name": "string",
+      "email": "string",
+      "createdAt": "2026-05-20T00:00:00Z"
+    }
+  ]
 }
 ```
 
@@ -856,7 +914,8 @@ Lista turmas com paginação.
   "id": "guid",
   "name": "string",
   "grade": "string",
-  "schoolYear": 2026
+  "schoolYear": 2026,
+  "teacherIds": ["guid"]
 }
 ```
 
@@ -866,7 +925,7 @@ Lista turmas com paginação.
 
 #### `DELETE /api/v1/classes/{id}`
 
-Inativa (soft delete) uma turma.
+Inativa uma turma, alterando `status` para `Inactive`.
 
 **Resposta 204 No Content** | **404 Not Found**.
 
@@ -886,7 +945,7 @@ Requer `[Authorize]`.
 
 #### `GET /api/v1/ai/requests`
 
-Lista requisições feitas à IA com paginação.
+Lista requisições feitas à IA pelo usuário autenticado, com paginação.
 
 **Query Parameters**:
 | Parâmetro | Tipo | Obrigatório | Default |
@@ -907,8 +966,8 @@ Lista requisições feitas à IA com paginação.
       "tokensUsed": 850,
       "estimatedCost": 0.001275,
       "errorMessage": null,
-      "createdAt": "2026-05-18T00:00:00Z",
-      "updatedAt": "2026-05-18T00:00:00Z"
+      "createdAt": "2026-05-20T00:00:00Z",
+      "updatedAt": "2026-05-20T00:00:00Z"
     }
   ],
   "totalCount": 0,
@@ -920,6 +979,8 @@ Lista requisições feitas à IA com paginação.
 
 **Valores de `requestType`**: `LessonPlan`, `Activity`, `Report`, `Summarization`, `TextReformulation`, `ParentCommunication`  
 **Valores de `status`**: `Pending`, `Processing`, `Completed`, `Failed`
+
+> Mudança: o filtro por professor não vem mais por query string; é sempre derivado do `userId` do JWT.
 
 ---
 
@@ -999,9 +1060,13 @@ Todos os endpoints de listagem retornam este envelope:
   "totalCount": 0,
   "page": 1,
   "pageSize": 10,
-  "totalPages": 0
+  "totalPages": 0,
+  "hasNextPage": false,
+  "hasPreviousPage": false
 }
 ```
+
+> Mudança: além de `totalPages`, o envelope também expõe `hasNextPage` e `hasPreviousPage`.
 
 ### Resposta de Criação
 
@@ -1037,25 +1102,29 @@ Todos os endpoints `POST` de criação retornam:
 4. **Expiração**: 8 horas; após isso, refazer login
 
 O payload do JWT contém:
-- `sub`: `userId` (Guid)
+- `nameidentifier`: `userId` (Guid)
 - `name`: nome do usuário
 - `email`: e-mail do usuário
-- `role`: role numérica (1, 2 ou 3)
+- `role`: nome da role (`Professor`, `Diretor` ou `Coordenador`)
+
+> Mudança: controllers usam `ClaimTypes.NameIdentifier` para identificar o usuário autenticado.
 
 ---
 
 ## 7. Modelo de Dados — Relacionamentos
 
 ```
-User (1) ──── (0..1) Teacher
-Teacher (1) ──── (N) LessonPlan
-Teacher (1) ──── (N) Activity
-Teacher (1) ──── (N) PedagogicalReport
-Teacher (1) ──── (N) AIRequest
+User (role=Professor) (1) ──── (N) LessonPlan
+User (role=Professor) (1) ──── (N) Activity
+User (role=Professor) (1) ──── (N) PedagogicalReport
+User (role=Professor) (1) ──── (N) AIRequest
 LessonPlan (1) ──── (N) Activity (opcional, via lessonPlanId)
 AIRequest (1) ──── (1) AIResponse
 SchoolClass (1) ──── (N) Student
+SchoolClass (N) ──── (N) User (role=Professor), via ClassTeachers
 ```
+
+> Mudança: a tabela `Teachers` foi removida. A associação entre turmas e professores agora usa `ClassTeachers` apontando para `Users`.
 
 ---
 
@@ -1075,7 +1144,7 @@ Os endpoints de IA (`/generate`) consomem a OpenAI automaticamente. O modelo pad
 
 ### Resposta de Custo da IA
 
-Endpoints de IA retornam metadados de uso:
+Endpoints de IA que retornam conteúdo diretamente, como resumo e comunicação com responsáveis, retornam metadados de uso. Endpoints `/generate` persistem o recurso gerado e retornam `{ "id": "guid" }`.
 
 ```json
 {
@@ -1089,10 +1158,12 @@ Endpoints de IA retornam metadados de uso:
 ## 9. Segurança e LGPD
 
 - **Documentos dos alunos** são armazenados em formato completo no banco, mas retornados mascarados na API (`documentIdMasked`: `"XXX***XXXX"`).
-- **Soft delete** em todas as entidades: registros nunca são excluídos fisicamente. Campo `deletedAt` marca a exclusão lógica.
-- **Concorrência otimista**: controle via `rowVersion` no EF Core.
-- **Dados de alunos** não são enviados à IA sem sanitização prévia.
+- **Soft delete / inativação lógica**: entidades pedagógicas usam `DeletedAt`; turmas usam `Status = Inactive`.
+- **Concorrência otimista**: prevista, mas não há `RowVersion`/concurrency token configurado no estado atual do código.
+- **Dados de alunos na IA**: regra de produto exige sanitização; no estado atual, geração de relatório/comunicação ainda recebe `studentName` no prompt.
 - **Todas as respostas da IA** são logadas com tokens utilizados e custo estimado.
+- **Escopo por usuário**: consultas por ID, atualização, exclusão, publicação, arquivamento e ações de IA dos módulos pedagógicos validam o proprietário pelo `userId` do JWT.
+- **CORS local**: a API aceita origens `localhost` e `127.0.0.1` pela policy `AllowLocalhost`.
 
 ---
 
@@ -1117,7 +1188,7 @@ fullName,documentType,documentId,birthDate,classId,enrollmentDate,notes
 | Módulo                            | Status        | Controller              |
 |-----------------------------------|---------------|-------------------------|
 | Autenticação / Login              | ✅ Completo   | `AuthController`        |
-| Perfil de Professor               | ✅ Completo   | `TeachersController`    |
+| Professores (listagem + perfil)   | ✅ Completo   | `TeachersController`    |
 | Planos de Aula                    | ✅ Completo   | `LessonPlansController` |
 | Atividades                        | ✅ Completo   | `ActivitiesController`  |
 | Relatórios Pedagógicos            | ✅ Completo   | `ReportsController`     |
@@ -1158,7 +1229,7 @@ SiaedBackend/
 │   │   ├── Reports/                    # CRUD + Generate + Summarize + ParentComm
 │   │   ├── Students/                   # CRUD + Transfer + Import
 │   │   ├── SchoolClasses/              # CRUD
-│   │   ├── Teachers/                   # GetMe
+│   │   ├── Teachers/                   # List + GetMe (baseado em User role=Professor)
 │   │   └── AI/                         # GetRequests
 │   ├── Common/
 │   │   ├── Result.cs                   # Result Pattern
@@ -1166,7 +1237,7 @@ SiaedBackend/
 │   └── Interfaces/                     # Contratos de repositórios e serviços
 │
 ├── Siaed.Domain/                       # Entidades, Enums, Regras de Negócio
-│   ├── Entities/                       # User, Teacher, Student, SchoolClass,
+│   ├── Entities/                       # User, Student, SchoolClass,
 │   │                                   # LessonPlan, Activity, PedagogicalReport,
 │   │                                   # AIRequest, AIResponse
 │   └── Enums/                          # Todos os enums listados na seção 4
@@ -1178,3 +1249,5 @@ SiaedBackend/
     ├── Identity/                       # JwtService, PasswordHasher
     └── Migrations/                     # Migrations do EF Core
 ```
+
+

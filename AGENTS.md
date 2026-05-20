@@ -134,7 +134,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
 - **Não** usar Pages Router (`pages/`). Somente App Router.
 - **Não** usar `getServerSideProps`, `getStaticProps`, `getInitialProps`.
-- **Não** armazenar o token JWT em `localStorage` — usar **cookie httpOnly** via Route Handler ou `document.cookie` com flag `Secure; SameSite=Strict`.
+- **Não** armazenar o token JWT em `localStorage` — usar cookie com `Secure; SameSite=Strict`; no fluxo atual do projeto, a escrita ocorre via `document.cookie`.
 - **Não** expor a `NEXT_PUBLIC_API_URL` com credenciais — variáveis públicas são visíveis no bundle client.
 - **Não** chamar a API do backend diretamente de Server Components passando o token do header — use Route Handlers como proxy se necessário.
 - **Não** criar arquivos `.js` — apenas `.ts` e `.tsx`.
@@ -259,7 +259,8 @@ import { queryKeys } from '@/lib/hooks/query-keys'
 import { useCurrentUser } from '@/lib/hooks/use-current-user'
 
 export function useLessonPlans(params: { page?: number; pageSize?: number }) {
-  const { teacherId } = useCurrentUser()
+  const user = useCurrentUser()
+  const teacherId = user?.userId
   return useQuery({
     queryKey: queryKeys.lessonPlans.list({ teacherId, ...params }),
     queryFn: () => lessonPlansApi.list({ teacherId, ...params }),
@@ -317,6 +318,8 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
 3. Armazenar `{ userId, name, email, role }` em `sessionStorage` para leitura client-side (sem dados sensíveis).
 4. O Axios interceptor lê o token do cookie e injeta em `Authorization: Bearer <token>`.
 5. Em 401, limpar cookie e redirecionar para `/login`.
+
+Para fluxos pedagógicos, `teacherId` corresponde ao próprio `userId` do usuário com papel `Professor`.
 
 ### 6.2 Proteção de Rotas
 
@@ -477,6 +480,8 @@ export interface PagedResult<T> {
   page: number
   pageSize: number
   totalPages: number
+  hasNextPage: boolean
+  hasPreviousPage: boolean
 }
 
 export type LessonPlanStatus = 1 | 2 | 3 // Draft | Published | Archived
