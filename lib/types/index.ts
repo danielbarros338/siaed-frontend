@@ -65,6 +65,12 @@ export type ClassStatus = 1 | 2
 export type LessonPlanStatus = 1 | 2 | 3
 // 1 = Draft | 2 = Published | 3 = Archived
 
+export type ActivityStatus = 1 | 2 | 3
+// 1 = Draft | 2 = Published | 3 = Archived
+
+export type ActivityType = 1 | 2 | 3 | 4
+// 1 = Exercise | 2 = Quiz | 3 = Project | 4 = Homework
+
 export interface LessonPlan {
   id: string
   teacherId: string
@@ -80,6 +86,25 @@ export interface LessonPlan {
   ageRange: string
   isAIGenerated: boolean
   status: LessonPlanStatus
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Activity {
+  id: string
+  teacherId: string
+  lessonPlanId: string | null
+  title: string
+  description: string | null
+  subject: string
+  grade: string
+  ageRange: string
+  content: string
+  answerKey: string | null
+  simplifiedVersion: string | null
+  type: ActivityType
+  isAIGenerated: boolean
+  status: ActivityStatus
   createdAt: string
   updatedAt: string
 }

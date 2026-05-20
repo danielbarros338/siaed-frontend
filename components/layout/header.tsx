@@ -10,6 +10,7 @@ import { usePathname } from 'next/navigation'
 
 const NAV_ITEMS = [
   { href: '/lesson-plans', label: 'Planos de Aula' },
+  { href: '/activities', label: 'Atividades' },
   { href: '/classes', label: 'Turmas' },
   { href: '/students', label: 'Estudantes' },
 ] as const

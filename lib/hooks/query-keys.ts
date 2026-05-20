@@ -8,6 +8,7 @@ export const queryKeys = {
     all: ['activities'] as const,
     list: (params: object) => ['activities', 'list', params] as const,
     detail: (id: string) => ['activities', 'detail', id] as const,
+    generationResult: (id: string) => ['activities', 'generation-result', id] as const,
   },
   students: {
     all: ['students'] as const,
