@@ -56,3 +56,70 @@ export type StudentStatus = 1 | 2 | 3
 
 export type DocumentType = 1 | 2 | 3
 // 1 = CPF | 2 = RegistroEstrangeiro | 3 = IdInterno
+
+export type ClassStatus = 1 | 2
+// 1 = Active | 2 = Inactive
+
+export const CLASS_STATUS_LABELS: Record<ClassStatus, string> = {
+  1: 'Ativa',
+  2: 'Inativa',
+}
+
+export interface SchoolClass {
+  id: string
+  name: string
+  grade: string
+  schoolYear: number
+  status: ClassStatus
+  createdAt: string
+  teacherIds?: string[]
+  teachers?: ClassTeacher[]
+}
+
+export interface ClassTeacher {
+  id?: string
+  teacherId?: string
+  name: string
+  subject?: string | null
+}
+
+export interface ClassListItem {
+  id: string
+  name: string
+  grade: string
+  schoolYear: number
+  status: ClassStatus
+}
+
+export interface CreateClassDto {
+  name: string
+  grade: string
+  schoolYear: number
+  teacherIds?: string[]
+}
+
+export interface UpdateClassDto {
+  id: string
+  name: string
+  grade: string
+  schoolYear: number
+  teacherIds?: string[]
+}
+
+export interface TeacherListItem {
+  id: string
+  name: string
+  subject?: string | null
+}
+
+export interface TeachersListParams {
+  page?: number
+  pageSize?: number
+  search?: string
+}
+
+export interface ClassesListParams {
+  page?: number
+  pageSize?: number
+  search?: string
+}

@@ -24,7 +24,7 @@ import { editStudentSchema, type EditStudentFormValues } from '@/features/studen
 import { applyCpfMask, removeMask } from '@/features/students/utils/format'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch, type Resolver } from 'react-hook-form'
 
 type CreateMode = {
   mode: 'create'
@@ -45,22 +45,23 @@ type EditMode = {
 type StudentFormProps = CreateMode | EditMode
 
 // We type the form as the superset (CreateStudentFormValues) and use the
-// appropriate Zod schema based on mode. The edit schema omits classId and
-// enrollmentDate, so those fields are simply not rendered and not validated.
+// appropriate Zod schema based on mode.
 export function StudentForm(props: StudentFormProps) {
   const { mode, isSubmitting, apiError } = props
 
   const schema = mode === 'create' ? createStudentSchema : editStudentSchema
 
   const form = useForm<CreateStudentFormValues>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(schema as any),
+    resolver: zodResolver(schema) as unknown as Resolver<CreateStudentFormValues>,
     defaultValues: (props.defaultValues ?? {}) as Partial<CreateStudentFormValues>,
   })
 
   const { data: classesData } = useClassesForSelect()
 
-  const documentType = form.watch('documentType')
+  const documentType = useWatch({
+    control: form.control,
+    name: 'documentType',
+  })
 
   useEffect(() => {
     form.setValue('documentId', '')
@@ -79,7 +80,8 @@ export function StudentForm(props: StudentFormProps) {
     if (mode === 'create') {
       ;(props as CreateMode).onSubmit(cleaned)
     } else {
-      const { classId: _classId, enrollmentDate: _enrollmentDate, ...editData } = cleaned
+      const editData = { ...cleaned }
+      delete editData.enrollmentDate
       ;(props as EditMode).onSubmit(editData as EditStudentFormValues)
     }
   }
@@ -186,7 +188,7 @@ export function StudentForm(props: StudentFormProps) {
           )}
         </div>
 
-        {mode === 'create' && (
+        {(mode === 'create' || mode === 'edit') && (
           <FormField
             control={form.control}
             name="classId"

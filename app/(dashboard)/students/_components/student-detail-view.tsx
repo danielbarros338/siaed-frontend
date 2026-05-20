@@ -8,6 +8,7 @@ import { StudentStatusBadge } from '@/features/students/components/student-statu
 import { TransferModal } from '@/features/students/components/transfer-modal'
 import { useStudentDetail } from '@/features/students/hooks/use-student-detail'
 import { DOCUMENT_TYPE_LABELS, formatDateBr } from '@/features/students/utils/format'
+import { useCurrentUser } from '@/lib/hooks/use-current-user'
 import axios from 'axios'
 import { ArrowLeft, Pencil } from 'lucide-react'
 import Link from 'next/link'
@@ -20,6 +21,8 @@ interface StudentDetailViewProps {
 
 export function StudentDetailView({ id }: StudentDetailViewProps) {
   const { data: student, isLoading, error } = useStudentDetail(id)
+  const { user } = useCurrentUser()
+  const canWrite = user?.role === 2 || user?.role === 3
 
   const [transferOpen, setTransferOpen] = useState(false)
   const [inativarOpen, setInativarOpen] = useState(false)
@@ -72,47 +75,51 @@ export function StudentDetailView({ id }: StudentDetailViewProps) {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <Button asChild variant="outline" size="sm">
-            <Link href={`/students/${id}/edit`}>
-              <Pencil className="mr-1 h-4 w-4" />
-              Editar
-            </Link>
-          </Button>
-
-          {student.status === 1 && (
+          {canWrite && (
             <>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setTransferOpen(true)}
-              >
-                Transferir Turma
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/students/${id}/edit`}>
+                  <Pencil className="mr-1 h-4 w-4" />
+                  Editar
+                </Link>
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setInativarOpen(true)}
-              >
-                Inativar
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setEvasaoOpen(true)}
-              >
-                Registrar Evasão
-              </Button>
-            </>
-          )}
 
-          {(student.status === 2 || student.status === 3) && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setReativarOpen(true)}
-            >
-              Reativar
-            </Button>
+              {student.status === 1 && (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setTransferOpen(true)}
+                  >
+                    Transferir Turma
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setInativarOpen(true)}
+                  >
+                    Inativar
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setEvasaoOpen(true)}
+                  >
+                    Registrar Evasão
+                  </Button>
+                </>
+              )}
+
+              {(student.status === 2 || student.status === 3) && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setReativarOpen(true)}
+                >
+                  Reativar
+                </Button>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -170,30 +177,33 @@ export function StudentDetailView({ id }: StudentDetailViewProps) {
         </div>
       )}
 
-      {/* Modals */}
-      <TransferModal
-        studentId={id}
-        currentClassId={student.classId}
-        open={transferOpen}
-        onOpenChange={setTransferOpen}
-      />
-      <InativarDialog
-        studentId={id}
-        studentName={student.fullName}
-        open={inativarOpen}
-        onOpenChange={setInativarOpen}
-      />
-      <RegistrarEvasaoDialog
-        studentId={id}
-        studentName={student.fullName}
-        open={evasaoOpen}
-        onOpenChange={setEvasaoOpen}
-      />
-      <ReactivateModal
-        studentId={id}
-        open={reativarOpen}
-        onOpenChange={setReativarOpen}
-      />
+      {canWrite && (
+        <>
+          <TransferModal
+            studentId={id}
+            currentClassId={student.classId}
+            open={transferOpen}
+            onOpenChange={setTransferOpen}
+          />
+          <InativarDialog
+            studentId={id}
+            studentName={student.fullName}
+            open={inativarOpen}
+            onOpenChange={setInativarOpen}
+          />
+          <RegistrarEvasaoDialog
+            studentId={id}
+            studentName={student.fullName}
+            open={evasaoOpen}
+            onOpenChange={setEvasaoOpen}
+          />
+          <ReactivateModal
+            studentId={id}
+            open={reativarOpen}
+            onOpenChange={setReativarOpen}
+          />
+        </>
+      )}
     </div>
   )
 }

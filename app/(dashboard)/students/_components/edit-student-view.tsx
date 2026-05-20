@@ -3,13 +3,16 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import { StudentForm } from '@/features/students/components/student-form'
 import { useStudentDetail } from '@/features/students/hooks/use-student-detail'
+import { useTransferStudent } from '@/features/students/hooks/use-transfer-student'
 import { useUpdateStudent } from '@/features/students/hooks/use-update-student'
 import type { EditStudentFormValues } from '@/features/students/schemas/edit-student-schema'
 import { extractApiErrors } from '@/lib/api/auth'
+import { useCurrentUser } from '@/lib/hooks/use-current-user'
 import axios from 'axios'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 interface EditStudentViewProps {
   id: string
@@ -17,7 +20,14 @@ interface EditStudentViewProps {
 
 export function EditStudentView({ id }: EditStudentViewProps) {
   const { data: student, isLoading, error } = useStudentDetail(id)
-  const mutation = useUpdateStudent(id)
+  const router = useRouter()
+  const mutation = useUpdateStudent(id, {
+    redirectOnSuccess: false,
+    showSuccessToast: false,
+  })
+  const transferMutation = useTransferStudent(id)
+  const { user } = useCurrentUser()
+  const canWrite = user?.role === 2 || user?.role === 3
 
   if (error) {
     if (axios.isAxiosError(error) && error.response?.status === 404) {
@@ -25,12 +35,27 @@ export function EditStudentView({ id }: EditStudentViewProps) {
     }
   }
 
-  const apiError = mutation.error
-    ? extractApiErrors(mutation.error)[0] ?? null
-    : null
+  const apiError = transferMutation.error
+    ? extractApiErrors(transferMutation.error)[0] ?? null
+    : mutation.error
+      ? extractApiErrors(mutation.error)[0] ?? null
+      : null
 
-  function handleSubmit(values: EditStudentFormValues) {
-    mutation.mutate({ id, ...values })
+  async function handleSubmit(values: EditStudentFormValues) {
+    if (!student) {
+      return
+    }
+
+    const { classId, ...updateValues } = values
+
+    await mutation.mutateAsync({ id, ...updateValues })
+
+    if (classId !== student.classId) {
+      await transferMutation.mutateAsync({ newClassId: classId })
+    }
+
+    toast.success('Dados do aluno atualizados com sucesso!')
+    router.push(`/students/${id}`)
   }
 
   if (isLoading) {
@@ -52,11 +77,26 @@ export function EditStudentView({ id }: EditStudentViewProps) {
 
   if (!student) return null
 
+  if (!canWrite) {
+    return (
+      <div className="space-y-4">
+        <h1 className="text-2xl font-bold tracking-tight">Acesso negado</h1>
+        <p className="text-sm text-muted-foreground">
+          Apenas coordenadores e diretores podem editar alunos.
+        </p>
+        <Link href={`/students/${id}`} className="text-sm underline underline-offset-4 hover:text-primary">
+          Voltar para detalhes
+        </Link>
+      </div>
+    )
+  }
+
   const defaultValues: Partial<EditStudentFormValues> = {
     fullName: student.fullName,
     documentType: student.documentType,
     documentId: student.documentIdMasked,
     birthDate: student.birthDate,
+    classId: student.classId,
     notes: student.notes ?? '',
   }
 
@@ -81,7 +121,7 @@ export function EditStudentView({ id }: EditStudentViewProps) {
         mode="edit"
         defaultValues={defaultValues}
         onSubmit={handleSubmit}
-        isSubmitting={mutation.isPending}
+        isSubmitting={mutation.isPending || transferMutation.isPending}
         apiError={apiError}
       />
     </div>

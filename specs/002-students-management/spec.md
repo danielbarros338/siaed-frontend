@@ -32,7 +32,7 @@ Um coordenador ou professor acessa o módulo de alunos e visualiza a lista pagin
 
 ### User Story 2 — Cadastrar Novo Aluno (Priority: P1)
 
-Um coordenador preenche o formulário de cadastro de aluno com nome completo, tipo e número de documento, data de nascimento, turma e data de matrícula. Após salvar, o aluno aparece na listagem.
+Um coordenador ou diretor preenche o formulário de cadastro de aluno com nome completo, tipo e número de documento, data de nascimento, turma e data de matrícula. Após salvar, o aluno aparece na listagem.
 
 **Why this priority**: O cadastro é a origem dos dados no sistema. Sem ele, não há alunos para gerenciar.
 
@@ -173,11 +173,12 @@ Um usuário faz upload de um arquivo CSV com dados de múltiplos alunos. O siste
 
 **Listagem**
 
-- **FR-001**: O sistema DEVE exibir a listagem paginada de alunos consumindo `GET /api/v1/students` com suporte a `page`, `pageSize`, `search`, `status` e `classId`. O `pageSize` padrão é **20** e fixo — não há seletor de quantidade por página na interface.
+- **FR-001**: O sistema DEVE exibir a listagem paginada de alunos consumindo `GET /api/v1/students` com suporte a `page`, `pageSize`, `search`, `status` e `classId`. O `pageSize` padrão é **20** e fixo — não há seletor de quantidade por página na interface. No primeiro carregamento, o filtro de status DEVE iniciar em **Todos** (sem `status` aplicado).
 - **FR-002**: O sistema DEVE aplicar paginação server-side, enviando os parâmetros corretos a cada mudança de página ou filtro. O estado dos filtros (busca, status, turma, página) é **local ao componente** — não é sincronizado com query params da URL. Os filtros são resetados ao sair da página.
 - **FR-003**: O sistema DEVE exibir esqueletos de carregamento (skeleton) enquanto a listagem é carregada.
 - **FR-004**: O sistema DEVE exibir um estado vazio quando a listagem retornar zero itens.
 - **FR-005**: O sistema DEVE exibir uma mensagem de erro inline com opção de retry quando a API falhar.
+- **FR-005b**: Quando a listagem retornar **403**, o sistema DEVE exibir estado específico de acesso negado, sem botão de retry e sem redirecionamento automático.
 - **FR-006**: O campo de busca DEVE aplicar debounce de no mínimo 300ms para evitar requisições excessivas.
 - **FR-006b**: Cada linha da tabela de listagem DEVE exibir um botão primário "Ver detalhes" e um menu dropdown (`...`) com ações rápidas contextuais. Para alunos **Ativos**, o dropdown contém: Editar, Transferir Turma, **Inativar** (status=2) e **Registrar Evasão** (status=3) — como dois itens distintos, cada um com seu próprio AlertDialog de confirmação independente. Para alunos **Inativos/Evadidos**, o dropdown contém apenas: Reativar. As ações DEVEM respeitar o status atual do aluno.
 
@@ -223,7 +224,7 @@ Um usuário faz upload de um arquivo CSV com dados de múltiplos alunos. O siste
 
 - **FR-027**: O upload DEVE aceitar apenas arquivos com extensão `.csv`, validado client-side antes de enviar.
 - **FR-028**: O envio DEVE utilizar `POST /api/v1/students/import` com `Content-Type: multipart/form-data` e campo `file`.
-- **FR-029**: O relatório pós-importação DEVE ser exibido **inline abaixo do formulário de upload** na mesma página, contendo: contador `imported`, contador `skipped` e lista de `errors` (cada item com número de linha e motivo). Após exibir o relatório, DEVE aparecer um botão **"Importar outro arquivo"** que reseta o estado do componente (remove arquivo selecionado, oculta relatório) sem navegar para outra rota.
+- **FR-029**: A importação CSV DEVE operar em modo **parcial**: linhas válidas são importadas e linhas inválidas são ignoradas com erro detalhado. O relatório pós-importação DEVE ser exibido **inline abaixo do formulário de upload** na mesma página, contendo: contador `imported`, contador `skipped` e lista de `errors` (cada item com número de linha e motivo). Após exibir o relatório, DEVE aparecer um botão **"Importar outro arquivo"** que reseta o estado do componente (remove arquivo selecionado, oculta relatório) sem navegar para outra rota.
 - **FR-030**: A tela de importação DEVE exibir instruções com o formato esperado do arquivo CSV, listando as colunas obrigatórias e opcionais: `fullName` (texto), `documentType` (1=CPF, 2=RegistroEstrangeiro, 3=IdInterno), `documentId` (texto), `birthDate` (YYYY-MM-DD), `classId` (GUID), `enrollmentDate` (YYYY-MM-DD), `notes` (texto, opcional). A ordem das colunas no cabeçalho do CSV deve seguir exatamente esta sequência.
 - **FR-030b**: A tela de importação DEVE oferecer um botão "Baixar template" que gera e dispara o download de um arquivo `.csv` estático com o cabeçalho correto e uma linha de exemplo preenchida com dados fictícios. A geração é feita inteiramente no frontend (sem chamada à API), usando `Blob` e URL object.
 
@@ -233,6 +234,7 @@ Um usuário faz upload de um arquivo CSV com dados de múltiplos alunos. O siste
 - **FR-032**: Toda requisição HTTP DEVE incluir o token JWT via interceptor do Axios centralizado.
 - **FR-033**: Em resposta 401, o sistema DEVE limpar o cookie de autenticação e redirecionar para `/login`.
 - **FR-034**: Nenhuma URL de API DEVE ser hardcoded; DEVE-SE utilizar a variável de ambiente `NEXT_PUBLIC_API_URL`.
+- **FR-035**: A interface DEVE aplicar controle de permissões por role para ações de escrita: Professor somente leitura (sem botões de criar/editar/transferir/inativar/evasão/reativar/importar), enquanto Coordenador e Diretor podem executar ações de escrita. A autorização final continua sendo validada pelo backend.
 
 ---
 
@@ -272,7 +274,7 @@ Um usuário faz upload de um arquivo CSV com dados de múltiplos alunos. O siste
 - As datas enviadas à API seguem o formato ISO 8601 (`YYYY-MM-DD`); a formatação `dd/mm/aaaa` é apenas para exibição.
 - O campo `notes` é opcional em todos os formulários.
 - O debounce de 300ms no campo de busca é um padrão aceitável para a infraestrutura de produção esperada.
-- Roles (Professor, Diretor, Coordenador) podem acessar o módulo de alunos; controle granular de permissão por role está fora do escopo desta spec (a proteção é feita pelo token JWT).
+- Roles (Professor, Diretor, Coordenador) podem acessar o módulo de alunos; porém, no frontend, Professor atua somente em leitura e Diretor/Coordenador possuem ações de escrita.
 
 ---
 
@@ -290,3 +292,7 @@ Um usuário faz upload de um arquivo CSV com dados de múltiplos alunos. O siste
 - Q: Após o relatório de importação CSV ser exibido, o usuário permanece na tela ou é redirecionado? → A: Permanece na tela de importação; o relatório é exibido inline abaixo do formulário; botão "Importar outro arquivo" reseta o estado local (arquivo + relatório) sem navegação.
 - Q: Os filtros da listagem (busca, status, turma, página) devem ser persistidos em URL query params ou em estado local do componente? → A: Estado local do componente apenas — filtros resetam ao navegar para fora da página. Implementar com `useState` no componente de listagem, sem `useSearchParams`.
 - Q: As ações "Inativar" e "Registrar Evasão" são dois itens separados no dropdown ou uma ação combinada? → A: Dois itens distintos no dropdown, cada um com seu próprio AlertDialog de confirmação independente — "Inativar" (status=2) e "Registrar Evasão" (status=3). Isso se aplica tanto ao dropdown da listagem (FR-006b) quanto aos botões de ação na tela de detalhes (US-6).
+- Q: Qual regra de permissão por role deve valer para ações de escrita (cadastrar, editar, transferir, inativar/evasão, reativar, importar CSV)? → A: Professor somente leitura; Coordenador e Diretor podem escrever.
+- Q: No carregamento inicial da listagem de alunos, qual deve ser o filtro padrão de status? → A: Todos os status (`status` vazio).
+- Q: Na importação CSV, qual comportamento adotar quando houver linhas válidas e inválidas no mesmo arquivo? → A: Importação parcial (importa linhas válidas e reporta inválidas).
+- Q: Quando a API de listagem de alunos retornar 403, qual comportamento de interface deve ser adotado? → A: Exibir estado específico de acesso negado, sem retry.

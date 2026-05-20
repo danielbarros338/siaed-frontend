@@ -16,7 +16,9 @@ import { TransferModal } from '@/features/students/components/transfer-modal'
 import { useClassesForSelect } from '@/features/students/hooks/use-classes-for-select'
 import { useStudents } from '@/features/students/hooks/use-students'
 import type { StudentListItem, StudentStatus } from '@/features/students/types'
+import { useCurrentUser } from '@/lib/hooks/use-current-user'
 import { useDebounce } from '@/lib/hooks/use-debounce'
+import axios from 'axios'
 import { Search } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -35,9 +37,18 @@ export function StudentsView() {
   const [evasaoTarget, setEvasaoTarget] = useState<StudentListItem | null>(null)
   const [reativarTarget, setReativarTarget] = useState<StudentListItem | null>(null)
 
+  const { user } = useCurrentUser()
+  const canWrite = user?.role === 2 || user?.role === 3
+
   const debouncedSearch = useDebounce(search, 300)
 
-  const { data, isLoading } = useStudents({
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useStudents({
     page,
     pageSize: PAGE_SIZE,
     search: debouncedSearch || undefined,
@@ -66,18 +77,20 @@ export function StudentsView() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Alunos</h1>
-        <div className="flex gap-2">
-          <Button asChild>
-            <Link href="/students/new">Novo aluno</Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link href="/students/import">Importar CSV</Link>
-          </Button>
-        </div>
+        {canWrite && (
+          <div className="flex gap-2">
+            <Button asChild>
+              <Link href="/students/new">Novo aluno</Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href="/students/import">Importar CSV</Link>
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <div className="relative flex-1 min-w-[200px]">
+        <div className="relative flex-1 min-w-50">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Buscar por nome ou documento..."
@@ -87,7 +100,7 @@ export function StudentsView() {
           />
         </div>
         <Select onValueChange={handleStatusChange} defaultValue="all">
-          <SelectTrigger className="w-[160px]">
+          <SelectTrigger className="w-40">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -98,7 +111,7 @@ export function StudentsView() {
           </SelectContent>
         </Select>
         <Select onValueChange={handleClassChange} defaultValue="all">
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-45">
             <SelectValue placeholder="Turma" />
           </SelectTrigger>
           <SelectContent>
@@ -112,44 +125,66 @@ export function StudentsView() {
         </Select>
       </div>
 
-      <StudentsTable
-        data={data?.items ?? []}
-        isLoading={isLoading}
-        page={page}
-        totalPages={data?.totalPages ?? 1}
-        onPageChange={setPage}
-        onTransfer={setTransferTarget}
-        onInativar={setInativarTarget}
-        onRegistrarEvasao={setEvasaoTarget}
-        onReativar={setReativarTarget}
-      />
+      {isError && axios.isAxiosError(error) && error.response?.status === 403 ? (
+        <div className="rounded-md border border-destructive/30 bg-destructive/5 p-6">
+          <p className="text-sm font-medium text-destructive">Acesso negado</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Você não tem permissão para visualizar esta listagem.
+          </p>
+        </div>
+      ) : isError ? (
+        <div className="rounded-md border p-6">
+          <p className="text-sm font-medium text-destructive">Erro ao carregar alunos.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Tente novamente em instantes.</p>
+          <Button type="button" variant="outline" size="sm" className="mt-3" onClick={() => refetch()}>
+            Tentar novamente
+          </Button>
+        </div>
+      ) : (
+        <StudentsTable
+          data={data?.items ?? []}
+          isLoading={isLoading}
+          page={page}
+          totalPages={data?.totalPages ?? 1}
+          canWrite={canWrite}
+          onPageChange={setPage}
+          onTransfer={setTransferTarget}
+          onInativar={setInativarTarget}
+          onRegistrarEvasao={setEvasaoTarget}
+          onReativar={setReativarTarget}
+        />
+      )}
 
-      <TransferModal
-        studentId={transferTarget?.id ?? ''}
-        currentClassId={transferTarget?.classId ?? ''}
-        open={!!transferTarget}
-        onOpenChange={(open) => { if (!open) setTransferTarget(null) }}
-      />
+      {canWrite && (
+        <>
+          <TransferModal
+            studentId={transferTarget?.id ?? ''}
+            currentClassId={transferTarget?.classId ?? ''}
+            open={!!transferTarget}
+            onOpenChange={(open) => { if (!open) setTransferTarget(null) }}
+          />
 
-      <InativarDialog
-        studentId={inativarTarget?.id ?? ''}
-        studentName={inativarTarget?.fullName ?? ''}
-        open={!!inativarTarget}
-        onOpenChange={(open) => { if (!open) setInativarTarget(null) }}
-      />
+          <InativarDialog
+            studentId={inativarTarget?.id ?? ''}
+            studentName={inativarTarget?.fullName ?? ''}
+            open={!!inativarTarget}
+            onOpenChange={(open) => { if (!open) setInativarTarget(null) }}
+          />
 
-      <RegistrarEvasaoDialog
-        studentId={evasaoTarget?.id ?? ''}
-        studentName={evasaoTarget?.fullName ?? ''}
-        open={!!evasaoTarget}
-        onOpenChange={(open) => { if (!open) setEvasaoTarget(null) }}
-      />
+          <RegistrarEvasaoDialog
+            studentId={evasaoTarget?.id ?? ''}
+            studentName={evasaoTarget?.fullName ?? ''}
+            open={!!evasaoTarget}
+            onOpenChange={(open) => { if (!open) setEvasaoTarget(null) }}
+          />
 
-      <ReactivateModal
-        studentId={reativarTarget?.id ?? ''}
-        open={!!reativarTarget}
-        onOpenChange={(open) => { if (!open) setReativarTarget(null) }}
-      />
+          <ReactivateModal
+            studentId={reativarTarget?.id ?? ''}
+            open={!!reativarTarget}
+            onOpenChange={(open) => { if (!open) setReativarTarget(null) }}
+          />
+        </>
+      )}
     </div>
   )
 }

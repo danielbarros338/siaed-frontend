@@ -64,6 +64,18 @@ export function ImportCsvForm() {
             <CardTitle>Importar Alunos via CSV</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="rounded-md border bg-muted/20 p-3 text-sm text-muted-foreground">
+              <p className="font-medium text-foreground">Formato esperado do CSV</p>
+              <p className="mt-1">
+                Colunas (nesta ordem): fullName, documentType, documentId, birthDate, classId,
+                enrollmentDate, notes.
+              </p>
+              <p className="mt-1">
+                Regras: documentType (1=CPF, 2=RegistroEstrangeiro, 3=IdInterno), datas em
+                YYYY-MM-DD e classId em GUID. A coluna notes e opcional.
+              </p>
+            </div>
+
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Precisa do modelo?</span>
               <Button type="button" variant="outline" size="sm" onClick={generateCsvTemplate}>

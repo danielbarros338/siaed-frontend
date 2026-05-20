@@ -7,17 +7,28 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
-export function useUpdateStudent(id: string) {
+interface UseUpdateStudentOptions {
+  redirectOnSuccess?: boolean
+  showSuccessToast?: boolean
+}
+
+export function useUpdateStudent(id: string, options?: UseUpdateStudentOptions) {
   const queryClient = useQueryClient()
   const router = useRouter()
+  const redirectOnSuccess = options?.redirectOnSuccess ?? true
+  const showSuccessToast = options?.showSuccessToast ?? true
 
   return useMutation({
     mutationFn: (dto: UpdateStudentDto) => studentsApi.update(id, dto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.students.detail(id) })
       queryClient.invalidateQueries({ queryKey: queryKeys.students.all })
-      toast.success('Dados do aluno atualizados com sucesso!')
-      router.push(`/students/${id}`)
+      if (showSuccessToast) {
+        toast.success('Dados do aluno atualizados com sucesso!')
+      }
+      if (redirectOnSuccess) {
+        router.push(`/students/${id}`)
+      }
     },
   })
 }

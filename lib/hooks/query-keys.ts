@@ -19,4 +19,8 @@ export const queryKeys = {
     list: (params: object) => ['classes', 'list', params] as const,
     detail: (id: string) => ['classes', 'detail', id] as const,
   },
+  teachers: {
+    all: ['teachers'] as const,
+    list: (params: object) => ['teachers', 'list', params] as const,
+  },
 }

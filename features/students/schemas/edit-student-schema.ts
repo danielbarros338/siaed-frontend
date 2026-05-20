@@ -12,6 +12,7 @@ export const editStudentSchema = z.object({
   birthDate: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data de nascimento inválida (use AAAA-MM-DD)'),
+  classId: z.string().uuid('Selecione uma turma válida'),
   notes: z
     .string()
     .max(1000, 'Observações devem ter no máximo 1000 caracteres')
