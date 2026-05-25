@@ -92,3 +92,5 @@ export interface UpdateActivityFormValues {
 
 export type ActivitiesPagedResult = PagedResult<Activity>
 
+export * from './grades'
+

@@ -49,6 +49,9 @@ export function ActivityActions({ activity }: ActivityActionsProps) {
             <Link href={`/activities/${activity.id}`}>Visualizar</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
+            <Link href={`/activities/${activity.id}/grades`}>Sessao de notas</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
             <Link href={`/activities/${activity.id}/edit`}>Editar</Link>
           </DropdownMenuItem>
           <DropdownMenuItem disabled={!canPublish || isBusy} onClick={() => setPublishOpen(true)}>

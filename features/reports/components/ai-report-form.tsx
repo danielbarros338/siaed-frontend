@@ -9,6 +9,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { useGenerateReport } from '@/features/reports/hooks/use-generate-report'
@@ -21,6 +22,7 @@ import { Loader2, Sparkles } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { z } from 'zod'
 
 interface AIReportFormProps {
   prefilledStudentId?: string
@@ -32,13 +34,20 @@ export function AIReportForm({ prefilledStudentId }: AIReportFormProps) {
   const { data: studentsData } = useStudentsForSelect()
   const { mutateAsync, isPending } = useGenerateReport()
 
-  const form = useForm<GenerateReportFormValues>({
+  const form = useForm<
+    z.input<typeof generateReportSchema>,
+    unknown,
+    GenerateReportFormValues
+  >({
     resolver: zodResolver(generateReportSchema),
     defaultValues: {
       studentId: prefilledStudentId ?? '',
       additionalInstructions: '',
+      useHistoricalReports: false,
+      historicalReportCount: 0,
     },
   })
+  const useHistoricalReports = form.watch('useHistoricalReports')
 
   async function onSubmit(values: GenerateReportFormValues) {
     if (!user) return
@@ -47,6 +56,7 @@ export function AIReportForm({ prefilledStudentId }: AIReportFormProps) {
         userId: user.userId,
         studentId: values.studentId,
         additionalInstructions: values.additionalInstructions || undefined,
+        historicalReportCount: values.useHistoricalReports ? values.historicalReportCount : 0,
       })
       toast.success('Relatório gerado pela IA com sucesso.')
       router.push('/reports')
@@ -115,6 +125,64 @@ export function AIReportForm({ prefilledStudentId }: AIReportFormProps) {
             </FormItem>
           )}
         />
+
+        <div className="space-y-4 rounded-lg border bg-muted/20 p-4">
+          <FormField
+            control={form.control}
+            name="useHistoricalReports"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start gap-3 space-y-0 rounded-md">
+                <FormControl>
+                  <input
+                    type="checkbox"
+                    className="mt-1 h-4 w-4 rounded border-input accent-primary"
+                    checked={field.value}
+                    onChange={(event) => {
+                      const checked = event.target.checked
+                      field.onChange(checked)
+
+                      form.setValue('historicalReportCount', checked ? 1 : 0, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      })
+                    }}
+                    disabled={isPending}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Considerar relatórios anteriores</FormLabel>
+                  <p className="text-sm text-muted-foreground">
+                    Marque para permitir o uso de relatórios anteriores como contexto da geração.
+                  </p>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="historicalReportCount"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Quantidade de relatórios anteriores</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={1}
+                    step={1}
+                    disabled={isPending || !useHistoricalReports}
+                    value={field.value}
+                    onChange={(event) => {
+                      const rawValue = event.target.value
+                      field.onChange(rawValue === '' ? 0 : Number(rawValue))
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <div className="flex justify-end gap-2">
           <Button

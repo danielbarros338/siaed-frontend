@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { ActivityDetailCard } from '@/features/activities/components/activity-detail-card'
+import { ActivityGradesSection } from '@/features/activities/components/activity-grades-section'
 import { ArchiveActivityDialog } from '@/features/activities/components/archive-activity-dialog'
 import { DeleteActivityDialog } from '@/features/activities/components/delete-activity-dialog'
 import { PublishActivityDialog } from '@/features/activities/components/publish-activity-dialog'
@@ -34,11 +35,11 @@ export function ActivityDetailView({ id }: ActivityDetailViewProps) {
     onSuccess: () => router.push('/activities'),
   })
 
-  if (user?.role !== 1) {
+  if (user?.role !== 1 && user?.role !== 3) {
     return (
       <div className="space-y-4">
         <h1 className="text-2xl font-bold tracking-tight">Acesso negado</h1>
-        <p className="text-sm text-muted-foreground">Apenas professores podem acessar este módulo.</p>
+        <p className="text-sm text-muted-foreground">Apenas professores e coordenadores podem acessar este módulo.</p>
       </div>
     )
   }
@@ -74,6 +75,9 @@ export function ActivityDetailView({ id }: ActivityDetailViewProps) {
 
       <div className="flex flex-wrap items-center gap-2">
         <Button asChild variant="outline" size="sm" disabled={isBusy}>
+          <Link href={`/activities/${id}/grades`}>Sessao de notas</Link>
+        </Button>
+        <Button asChild variant="outline" size="sm" disabled={isBusy}>
           <Link href={`/activities/${id}/edit`}>
             <Pencil className="mr-1 size-4" />
             Editar
@@ -91,6 +95,7 @@ export function ActivityDetailView({ id }: ActivityDetailViewProps) {
       </div>
 
       <ActivityDetailCard activity={activity} />
+      <ActivityGradesSection activityId={activity.id} />
 
       <PublishActivityDialog
         open={publishOpen}

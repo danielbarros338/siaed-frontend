@@ -97,6 +97,7 @@ export interface GenerateReportDto {
   userId: string
   studentId: string
   additionalInstructions?: string
+  historicalReportCount: number
 }
 
 export interface UpdateReportDto {
@@ -259,4 +260,41 @@ export interface ClassesListParams {
   page?: number
   pageSize?: number
   search?: string
+}
+
+export interface Grade {
+  id: string
+  activityId: string
+  studentId: string
+  schoolClassId: string
+  teacherId: string
+  gradeValue: string
+  conventionKey: string
+  version: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateGradeDto {
+  activityId: string
+  studentId: string
+  schoolClassId: string
+  teacherId: string
+  gradeValue: string
+  conventionKey: string
+}
+
+export interface UpdateGradeDto {
+  gradeValue: string
+  conventionKey: string
+  version: string
+}
+
+export interface GradesListParams {
+  page?: number
+  pageSize?: number
+  activityId?: string
+  schoolClassId?: string
+  teacherId?: string
+  gradeValue?: string
 }

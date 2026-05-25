@@ -12,6 +12,24 @@ export type CreateReportFormValues = z.infer<typeof createReportSchema>
 export const generateReportSchema = z.object({
   studentId: z.string().min(1, 'Selecione um aluno'),
   additionalInstructions: z.string().optional(),
+  useHistoricalReports: z.boolean().default(false),
+  historicalReportCount: z.coerce.number().int().min(0).default(0),
+}).superRefine((values, ctx) => {
+  if (values.useHistoricalReports && values.historicalReportCount < 1) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['historicalReportCount'],
+      message: 'Informe pelo menos 1 relatório anterior.',
+    })
+  }
+
+  if (!values.useHistoricalReports && values.historicalReportCount !== 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['historicalReportCount'],
+      message: 'Desative o histórico para enviar 0.',
+    })
+  }
 })
 
 export type GenerateReportFormValues = z.infer<typeof generateReportSchema>
