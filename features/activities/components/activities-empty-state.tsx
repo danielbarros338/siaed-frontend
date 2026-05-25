@@ -11,7 +11,7 @@ interface ActivitiesEmptyStateProps {
 export function ActivitiesEmptyState({ hasFilters, onClearFilters }: ActivitiesEmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center rounded-md border py-16 text-center">
-      <p className="text-sm text-muted-foreground">Nenhum plano de aula encontrado.</p>
+      <p className="text-sm text-muted-foreground">Nenhuma atividade encontrada.</p>
       <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
         {hasFilters && (
           <Button type="button" variant="outline" size="sm" onClick={onClearFilters}>
@@ -19,7 +19,7 @@ export function ActivitiesEmptyState({ hasFilters, onClearFilters }: ActivitiesE
           </Button>
         )}
         <Button asChild size="sm">
-          <Link href="/activities/new">Criar plano manual</Link>
+          <Link href="/activities/new">Criar atividade manual</Link>
         </Button>
         <Button asChild size="sm" variant="secondary">
           <Link href="/activities/generate">Gerar com IA</Link>

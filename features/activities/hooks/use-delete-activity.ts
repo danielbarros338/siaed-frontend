@@ -18,11 +18,11 @@ export function useDeleteActivity(id: string, options?: DeleteOptions) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.activities.detail(id) })
       queryClient.invalidateQueries({ queryKey: queryKeys.activities.all })
-      toast.success('Plano de aula excluÃ­do com sucesso!')
+      toast.success('Atividade excluída com sucesso!')
       options?.onSuccess?.()
     },
     onError: (error) => {
-      toast.error(extractActivityErrors(error)[0] ?? 'NÃ£o foi possÃ­vel excluir o plano de aula.')
+      toast.error(extractActivityErrors(error)[0] ?? 'Não foi possível excluir a atividade.')
     },
   })
 }

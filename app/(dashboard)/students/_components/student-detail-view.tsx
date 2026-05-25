@@ -75,6 +75,11 @@ export function StudentDetailView({ id }: StudentDetailViewProps) {
         </div>
 
         <div className="flex flex-wrap gap-2">
+          <Button asChild variant="outline" size="sm">
+            <Link href={`/reports?studentId=${id}`}>
+              Relatório
+            </Link>
+          </Button>
           {canWrite && (
             <>
               <Button asChild variant="outline" size="sm">

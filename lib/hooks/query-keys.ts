@@ -24,4 +24,9 @@ export const queryKeys = {
     all: ['teachers'] as const,
     list: (params: object) => ['teachers', 'list', params] as const,
   },
+  reports: {
+    all: ['reports'] as const,
+    list: (params: object) => ['reports', 'list', params] as const,
+    detail: (id: string) => ['reports', 'detail', id] as const,
+  },
 }

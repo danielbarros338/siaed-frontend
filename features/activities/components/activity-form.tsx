@@ -10,6 +10,13 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import {
     createActivitySchema,
@@ -52,7 +59,9 @@ function CreateActivityInner({ defaultValues, onSubmit, isSubmitting, apiError }
   const form = useForm<CreateActivityFormValues>({
     resolver: zodResolver(createActivitySchema) as unknown as Resolver<CreateActivityFormValues>,
     defaultValues: {
-      durationMinutes: 50,
+      description: '',
+      type: 1,
+      lessonPlanId: null,
       ...(defaultValues ?? {}),
     },
   })
@@ -64,8 +73,16 @@ function CreateActivityInner({ defaultValues, onSubmit, isSubmitting, apiError }
 
         <FormField control={form.control} name="title" render={({ field }) => (
           <FormItem>
-            <FormLabel>TÃ­tulo</FormLabel>
+            <FormLabel>Título</FormLabel>
             <FormControl><Input disabled={isSubmitting} {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+
+        <FormField control={form.control} name="description" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Descrição</FormLabel>
+            <FormControl><Textarea rows={4} disabled={isSubmitting} {...field} /></FormControl>
             <FormMessage />
           </FormItem>
         )} />
@@ -80,7 +97,7 @@ function CreateActivityInner({ defaultValues, onSubmit, isSubmitting, apiError }
           )} />
           <FormField control={form.control} name="grade" render={({ field }) => (
             <FormItem>
-              <FormLabel>SÃ©rie</FormLabel>
+              <FormLabel>Série</FormLabel>
               <FormControl><Input disabled={isSubmitting} {...field} /></FormControl>
               <FormMessage />
             </FormItem>
@@ -88,64 +105,66 @@ function CreateActivityInner({ defaultValues, onSubmit, isSubmitting, apiError }
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField control={form.control} name="durationMinutes" render={({ field }) => (
+          <FormField control={form.control} name="ageRange" render={({ field }) => (
             <FormItem>
-              <FormLabel>DuraÃ§Ã£o (min)</FormLabel>
-              <FormControl><Input type="number" min={10} max={600} disabled={isSubmitting} {...field} value={field.value ?? ''} /></FormControl>
+              <FormLabel>Faixa etária</FormLabel>
+              <FormControl><Input disabled={isSubmitting} {...field} /></FormControl>
               <FormMessage />
             </FormItem>
           )} />
-          <FormField control={form.control} name="ageRange" render={({ field }) => (
+
+          <FormField control={form.control} name="type" render={({ field }) => (
             <FormItem>
-              <FormLabel>Faixa etÃ¡ria</FormLabel>
-              <FormControl><Input disabled={isSubmitting} {...field} /></FormControl>
+              <FormLabel>Tipo de atividade</FormLabel>
+              <Select
+                value={String(field.value ?? '1')}
+                onValueChange={(value) => field.onChange(Number(value))}
+                disabled={isSubmitting}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o tipo" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="1">Exercício</SelectItem>
+                  <SelectItem value="2">Questionário</SelectItem>
+                  <SelectItem value="3">Projeto</SelectItem>
+                  <SelectItem value="4">Lição de casa</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )} />
         </div>
 
-        <FormField control={form.control} name="objectives" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Objetivos</FormLabel>
-            <FormControl><Textarea rows={5} disabled={isSubmitting} {...field} /></FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
-
         <FormField control={form.control} name="content" render={({ field }) => (
           <FormItem>
-            <FormLabel>ConteÃºdo</FormLabel>
+            <FormLabel>Conteúdo</FormLabel>
             <FormControl><Textarea rows={5} disabled={isSubmitting} {...field} /></FormControl>
             <FormMessage />
           </FormItem>
         )} />
 
-        <FormField control={form.control} name="methodology" render={({ field }) => (
+        <FormField control={form.control} name="lessonPlanId" render={({ field }) => (
           <FormItem>
-            <FormLabel>Metodologia</FormLabel>
-            <FormControl><Textarea rows={5} disabled={isSubmitting} {...field} /></FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
-
-        <FormField control={form.control} name="resources" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Recursos</FormLabel>
-            <FormControl><Textarea rows={5} disabled={isSubmitting} {...field} /></FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
-
-        <FormField control={form.control} name="evaluation" render={({ field }) => (
-          <FormItem>
-            <FormLabel>AvaliaÃ§Ã£o</FormLabel>
-            <FormControl><Textarea rows={5} disabled={isSubmitting} {...field} /></FormControl>
+            <FormLabel>ID do plano de aula (opcional)</FormLabel>
+            <FormControl>
+              <Input
+                disabled={isSubmitting}
+                value={field.value ?? ''}
+                onChange={(event) => {
+                  const value = event.target.value.trim()
+                  field.onChange(value === '' ? null : value)
+                }}
+              />
+            </FormControl>
             <FormMessage />
           </FormItem>
         )} />
 
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Salvando...' : 'Salvar plano'}
+          {isSubmitting ? 'Salvando...' : 'Salvar atividade'}
         </Button>
       </form>
     </Form>
@@ -165,15 +184,15 @@ function EditActivityInner({ defaultValues, onSubmit, isSubmitting, apiError }: 
 
         <FormField control={form.control} name="title" render={({ field }) => (
           <FormItem>
-            <FormLabel>TÃ­tulo</FormLabel>
+            <FormLabel>Título</FormLabel>
             <FormControl><Input disabled={isSubmitting} {...field} /></FormControl>
             <FormMessage />
           </FormItem>
         )} />
 
-        <FormField control={form.control} name="objectives" render={({ field }) => (
+        <FormField control={form.control} name="description" render={({ field }) => (
           <FormItem>
-            <FormLabel>Objetivos</FormLabel>
+            <FormLabel>Descrição</FormLabel>
             <FormControl><Textarea rows={5} disabled={isSubmitting} {...field} /></FormControl>
             <FormMessage />
           </FormItem>
@@ -181,38 +200,14 @@ function EditActivityInner({ defaultValues, onSubmit, isSubmitting, apiError }: 
 
         <FormField control={form.control} name="content" render={({ field }) => (
           <FormItem>
-            <FormLabel>ConteÃºdo</FormLabel>
-            <FormControl><Textarea rows={5} disabled={isSubmitting} {...field} /></FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
-
-        <FormField control={form.control} name="methodology" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Metodologia</FormLabel>
-            <FormControl><Textarea rows={5} disabled={isSubmitting} {...field} /></FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
-
-        <FormField control={form.control} name="resources" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Recursos</FormLabel>
-            <FormControl><Textarea rows={5} disabled={isSubmitting} {...field} /></FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
-
-        <FormField control={form.control} name="evaluation" render={({ field }) => (
-          <FormItem>
-            <FormLabel>AvaliaÃ§Ã£o</FormLabel>
+            <FormLabel>Conteúdo</FormLabel>
             <FormControl><Textarea rows={5} disabled={isSubmitting} {...field} /></FormControl>
             <FormMessage />
           </FormItem>
         )} />
 
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Salvando...' : 'Salvar alteraÃ§Ãµes'}
+          {isSubmitting ? 'Salvando...' : 'Salvar alterações'}
         </Button>
       </form>
     </Form>

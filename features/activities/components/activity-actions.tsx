@@ -19,21 +19,21 @@ import Link from 'next/link'
 import { useState } from 'react'
 
 interface ActivityActionsProps {
-  plan: Activity
+  activity: Activity
 }
 
-export function ActivityActions({ plan }: ActivityActionsProps) {
+export function ActivityActions({ activity }: ActivityActionsProps) {
   const [publishOpen, setPublishOpen] = useState(false)
   const [archiveOpen, setArchiveOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
 
-  const publishMutation = usePublishActivity(plan.id)
-  const archiveMutation = useArchiveActivity(plan.id)
-  const deleteMutation = useDeleteActivity(plan.id)
+  const publishMutation = usePublishActivity(activity.id)
+  const archiveMutation = useArchiveActivity(activity.id)
+  const deleteMutation = useDeleteActivity(activity.id)
 
   const isBusy = publishMutation.isPending || archiveMutation.isPending || deleteMutation.isPending
-  const canPublish = plan.status === 1
-  const canArchive = plan.status !== 3
+  const canPublish = activity.status === 1
+  const canArchive = activity.status !== 3
 
   return (
     <>
@@ -41,15 +41,15 @@ export function ActivityActions({ plan }: ActivityActionsProps) {
         <DropdownMenuTrigger asChild>
           <Button type="button" variant="ghost" size="sm" disabled={isBusy}>
             <MoreHorizontal className="size-4" />
-            <span className="sr-only">AÃ§Ãµes</span>
+            <span className="sr-only">Ações</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-44">
           <DropdownMenuItem asChild>
-            <Link href={`/activities/${plan.id}`}>Visualizar</Link>
+            <Link href={`/activities/${activity.id}`}>Visualizar</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href={`/activities/${plan.id}/edit`}>Editar</Link>
+            <Link href={`/activities/${activity.id}/edit`}>Editar</Link>
           </DropdownMenuItem>
           <DropdownMenuItem disabled={!canPublish || isBusy} onClick={() => setPublishOpen(true)}>
             Publicar
@@ -66,7 +66,7 @@ export function ActivityActions({ plan }: ActivityActionsProps) {
       <PublishActivityDialog
         open={publishOpen}
         onOpenChange={setPublishOpen}
-        title={plan.title}
+        title={activity.title}
         onConfirm={() => publishMutation.mutate()}
         isPending={publishMutation.isPending}
       />
@@ -74,7 +74,7 @@ export function ActivityActions({ plan }: ActivityActionsProps) {
       <ArchiveActivityDialog
         open={archiveOpen}
         onOpenChange={setArchiveOpen}
-        title={plan.title}
+        title={activity.title}
         onConfirm={() => archiveMutation.mutate()}
         isPending={archiveMutation.isPending}
       />
@@ -82,7 +82,7 @@ export function ActivityActions({ plan }: ActivityActionsProps) {
       <DeleteActivityDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
-        title={plan.title}
+        title={activity.title}
         onConfirm={() => deleteMutation.mutate()}
         isPending={deleteMutation.isPending}
       />

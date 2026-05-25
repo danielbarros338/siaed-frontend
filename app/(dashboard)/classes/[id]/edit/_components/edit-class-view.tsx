@@ -5,6 +5,7 @@ import { ClassForm } from '@/features/classes/components/class-form'
 import { useClassDetail } from '@/features/classes/hooks/use-class-detail'
 import { useUpdateClass } from '@/features/classes/hooks/use-update-class'
 import type { CreateClassFormValues } from '@/features/classes/schemas/create-class-schema'
+import type { ClassTeacher } from '@/lib/types'
 import { extractApiErrors } from '@/lib/api/auth'
 import { useCurrentUser } from '@/lib/hooks/use-current-user'
 import axios from 'axios'
@@ -54,25 +55,17 @@ export function EditClassView({ id }: EditClassViewProps) {
 
   const isNotFound = axios.isAxiosError(error) && error.response?.status === 404
   const initialTeacherIds = useMemo(() => (classData ? getClassTeacherIds(classData) : []), [classData])
-  const preloadedTeachers = useMemo(
-    () =>
-      classData?.teachers
-        ?.map((teacher) => {
-          const teacherId = teacher.id ?? teacher.teacherId
-
-          if (!teacherId) {
-            return null
-          }
-
-          return {
-            id: teacherId,
-            name: teacher.name,
-            subject: teacher.subject,
-          }
-        })
-        .filter((teacher): teacher is { id: string; name: string; subject?: string | null } => teacher !== null) ?? [],
-    [classData],
-  )
+  const preloadedTeachers = useMemo(() => {
+    if (!classData?.teachers) return []
+    const result: Array<{ id: string; name: string; subject?: string | null }> = []
+    for (const teacher of classData.teachers) {
+      const teacherId = teacher.id ?? teacher.teacherId
+      if (teacherId) {
+        result.push({ id: teacherId, name: teacher.name, subject: teacher.subject })
+      }
+    }
+    return result
+  }, [classData])
 
   if (isNotFound) {
     return (

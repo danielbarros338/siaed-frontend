@@ -20,7 +20,7 @@ export function useActivities(params: ListParams) {
     queryKey: queryKeys.activities.list(requestParams ?? params),
     queryFn: () => {
       if (!requestParams) {
-        throw new Error('Usuario autenticado invalido para carregar atividades.')
+        throw new Error('Usuário autenticado inválido para carregar atividades.')
       }
 
       return activitiesApi.list(requestParams)

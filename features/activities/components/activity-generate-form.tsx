@@ -185,7 +185,7 @@ export function ActivityGenerateForm({
                 max={100}
                 disabled={isSubmitting}
                 {...field}
-                value={field.value ?? ''}
+                value={(field.value as number | undefined) ?? ''}
               />
             </FormControl>
             <FormMessage />

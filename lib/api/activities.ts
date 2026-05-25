@@ -22,9 +22,16 @@ export const activitiesApi = {
 
   generate: (dto: GenerateActivityRequest) =>
     apiClient
-      .post<{ id: string }>('/api/v1/activities/generate', dto, {
-        timeout: 70_000,
-      })
+      .post<{ id: string }>(
+        '/api/v1/activities/generate',
+        {
+          ...dto,
+          LessonPlanId: dto.lessonPlanId,
+        },
+        {
+          timeout: 70_000,
+        },
+      )
       .then((r) => r.data),
 
   update: (id: string, dto: UpdateActivityRequest) =>

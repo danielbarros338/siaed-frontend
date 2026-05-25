@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { href: '/activities', label: 'Atividades' },
   { href: '/classes', label: 'Turmas' },
   { href: '/students', label: 'Estudantes' },
+  { href: '/reports', label: 'Relatórios' },
 ] as const
 
 export function Header() {
@@ -21,12 +22,14 @@ export function Header() {
   const pathname = usePathname()
 
   return (
-    <header className="border-b bg-background px-4 py-3 sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <header
+      className="bg-[linear-gradient(135deg,#0066cc_0%,#004aad_100%)] px-4 py-3 sm:px-6"
+    >
+      <div className="container-app flex flex-wrap items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-4">
           <Link
             href="/"
-            className="font-semibold text-lg transition-colors hover:text-primary"
+            className="font-bold text-lg text-white transition-colors hover:text-white/80"
             aria-label="Ir para a dashboard"
           >
             SIAED
@@ -45,8 +48,8 @@ export function Header() {
                       className={cn(
                         'inline-flex rounded-md px-3 py-2 text-sm transition-colors',
                         isActive
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                          ? 'bg-white/20 text-white font-medium'
+                          : 'text-white/80 hover:text-white hover:bg-white/10'
                       )}
                       aria-current={isActive ? 'page' : undefined}
                     >
@@ -60,8 +63,8 @@ export function Header() {
         </div>
         <div className="flex items-center gap-4">
         {user && (
-          <span className="text-sm text-muted-foreground">
-            Olá, <span className="font-medium text-foreground">{user.name}</span>
+          <span className="text-sm text-white/80">
+            Olá, <span className="font-medium text-white">{user.name}</span>
           </span>
         )}
         <Button
@@ -69,6 +72,7 @@ export function Header() {
           size="sm"
           onClick={logout}
           aria-label="Sair"
+          className="text-white/80 hover:text-white hover:bg-white/10"
         >
           <LogOut className="mr-2 size-4" />
           Sair

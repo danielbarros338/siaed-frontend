@@ -90,7 +90,7 @@ export function LessonPlanGenerateForm({
           <FormField control={form.control} name="durationMinutes" render={({ field }) => (
             <FormItem>
               <FormLabel>Duração (min)</FormLabel>
-              <FormControl><Input type="number" min={10} max={600} disabled={isSubmitting} {...field} value={field.value ?? ''} /></FormControl>
+              <FormControl><Input type="number" min={10} max={600} disabled={isSubmitting} {...field} value={(field.value as number | undefined) ?? ''} /></FormControl>
               <FormMessage />
             </FormItem>
           )} />

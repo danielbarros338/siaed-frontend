@@ -6,7 +6,7 @@ export const registerSchema = z
     email: z.string().email('E-mail inválido'),
     password: z.string().min(8, 'Mínimo 8 caracteres'),
     role: z.union([z.literal(1), z.literal(2), z.literal(3)], {
-      errorMap: () => ({ message: 'Selecione um perfil' }),
+      error: () => ({ message: 'Selecione um perfil' }),
     }),
     subject: z.string().optional(),
     schoolId: z

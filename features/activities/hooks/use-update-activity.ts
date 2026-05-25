@@ -17,11 +17,11 @@ export function useUpdateActivity(id: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.activities.detail(id) })
       queryClient.invalidateQueries({ queryKey: queryKeys.activities.all })
-      toast.success('Plano de aula atualizado com sucesso!')
+      toast.success('Atividade atualizada com sucesso!')
       router.push(`/activities/${id}`)
     },
     onError: (error) => {
-      toast.error(extractActivityErrors(error)[0] ?? 'NÃ£o foi possÃ­vel atualizar o plano de aula.')
+      toast.error(extractActivityErrors(error)[0] ?? 'Não foi possível atualizar a atividade.')
     },
   })
 }

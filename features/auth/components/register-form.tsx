@@ -16,7 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 
 export function RegisterForm() {
-  const form = useForm<RegisterFormValues>({
+  const form = useForm({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: '',

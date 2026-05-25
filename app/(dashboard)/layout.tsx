@@ -34,7 +34,9 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <div className="flex-1">{children}</div>
+      <div className="flex-1">
+        <div className="container-app py-6">{children}</div>
+      </div>
     </div>
   )
 }

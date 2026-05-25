@@ -97,6 +97,9 @@ export function StudentsTable({
                 <TableCell>
                   <div className="flex items-center justify-end gap-2">
                     <Button asChild size="sm" variant="outline">
+                      <Link href={`/reports?studentId=${student.id}`}>Relatório</Link>
+                    </Button>
+                    <Button asChild size="sm" variant="outline">
                       <Link href={`/students/${student.id}`}>Ver detalhes</Link>
                     </Button>
                     {canWrite && (

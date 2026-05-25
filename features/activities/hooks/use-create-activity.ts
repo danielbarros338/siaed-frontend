@@ -16,11 +16,11 @@ export function useCreateActivity() {
     mutationFn: (dto: CreateActivityRequest) => activitiesApi.create(dto),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.activities.all })
-      toast.success('Plano de aula criado com sucesso!')
+      toast.success('Atividade criada com sucesso!')
       router.push(`/activities/${data.id}`)
     },
     onError: (error) => {
-      toast.error(extractActivityErrors(error)[0] ?? 'NÃ£o foi possÃ­vel criar o plano de aula.')
+      toast.error(extractActivityErrors(error)[0] ?? 'Não foi possível criar a atividade.')
     },
   })
 }

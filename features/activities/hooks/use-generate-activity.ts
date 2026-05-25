@@ -20,7 +20,7 @@ export function useGenerateActivity() {
       router.push(`/activities/${data.id}`)
     },
     onError: (error) => {
-      toast.error(extractActivityErrors(error)[0] ?? 'Nao foi possivel gerar a atividade.')
+      toast.error(extractActivityErrors(error)[0] ?? 'Não foi possível gerar a atividade.')
     },
   })
 }

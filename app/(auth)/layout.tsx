@@ -14,8 +14,10 @@ export default async function AuthLayout({
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      {children}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#5de0e6]/10 to-[#004aad]/10">
+      <div className="container-app flex items-center justify-center">
+        {children}
+      </div>
     </div>
   )
 }

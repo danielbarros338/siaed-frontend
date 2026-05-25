@@ -14,10 +14,10 @@ export function usePublishActivity(id: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.activities.detail(id) })
       queryClient.invalidateQueries({ queryKey: queryKeys.activities.all })
-      toast.success('Plano de aula publicado com sucesso!')
+      toast.success('Atividade publicada com sucesso!')
     },
     onError: (error) => {
-      toast.error(extractActivityErrors(error)[0] ?? 'NÃ£o foi possÃ­vel publicar o plano de aula.')
+      toast.error(extractActivityErrors(error)[0] ?? 'Não foi possível publicar a atividade.')
     },
   })
 }

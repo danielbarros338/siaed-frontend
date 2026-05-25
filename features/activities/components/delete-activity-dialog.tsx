@@ -34,12 +34,12 @@ export function DeleteActivityDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent aria-labelledby={titleId} aria-describedby={descriptionId}>
         <AlertDialogHeader>
-          <AlertDialogTitle id={titleId}>Excluir plano</AlertDialogTitle>
+          <AlertDialogTitle id={titleId}>Excluir atividade</AlertDialogTitle>
           <AlertDialogDescription id={descriptionId}>
-            Esta aÃ§Ã£o realiza exclusÃ£o lÃ³gica e nÃ£o poderÃ¡ ser desfeita pela interface.
+            Esta ação realiza exclusão lógica e não poderá ser desfeita pela interface.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <p className="text-sm text-muted-foreground">Confirma a exclusÃ£o do plano {title}?</p>
+        <p className="text-sm text-muted-foreground">Confirma a exclusão da atividade {title}?</p>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>Cancelar</AlertDialogCancel>
           <AlertDialogAction variant="destructive" onClick={onConfirm} disabled={isPending}>

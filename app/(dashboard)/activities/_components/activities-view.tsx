@@ -31,7 +31,7 @@ export function ActivitiesView() {
     return (
       <div className="space-y-4">
         <h1 className="text-2xl font-bold tracking-tight">Acesso negado</h1>
-        <p className="text-sm text-muted-foreground">Apenas professores podem acessar este mÃ³dulo.</p>
+        <p className="text-sm text-muted-foreground">Apenas professores podem acessar este módulo.</p>
       </div>
     )
   }
@@ -42,8 +42,8 @@ export function ActivitiesView() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Planos de Aula</h1>
-          <p className="text-sm text-muted-foreground">Gerencie planos manuais e gerados por IA.</p>
+          <h1 className="text-2xl font-bold tracking-tight">Atividades</h1>
+          <p className="text-sm text-muted-foreground">Gerencie atividades manuais e geradas por IA.</p>
         </div>
 
         <div className="flex gap-2">
@@ -76,7 +76,7 @@ export function ActivitiesView() {
 
       {isError ? (
         <div className="rounded-md border p-6">
-          <p className="text-sm font-medium text-destructive">Erro ao carregar planos de aula.</p>
+          <p className="text-sm font-medium text-destructive">Erro ao carregar atividades.</p>
           <p className="mt-1 text-sm text-muted-foreground">{extractActivityErrors(error)[0]}</p>
           <Button type="button" variant="outline" size="sm" className="mt-3" onClick={() => refetch()}>
             Tentar novamente
@@ -104,7 +104,7 @@ export function ActivitiesView() {
             Anterior
           </Button>
           <span>
-            PÃ¡gina {Math.min(page, data.totalPages)} de {data.totalPages}
+            Página {Math.min(page, data.totalPages)} de {data.totalPages}
           </span>
           <Button
             type="button"
@@ -113,7 +113,7 @@ export function ActivitiesView() {
             onClick={() => setPage((current) => Math.min(data.totalPages, current + 1))}
             disabled={page >= data.totalPages}
           >
-            PrÃ³xima
+            Próxima
           </Button>
         </div>
       )}

@@ -71,6 +71,52 @@ export type ActivityStatus = 1 | 2 | 3
 export type ActivityType = 1 | 2 | 3 | 4
 // 1 = Exercise | 2 = Quiz | 3 = Project | 4 = Homework
 
+export interface Report {
+  id: string
+  userId: string
+  studentId: string
+  studentName: string
+  content: string
+  summary: string
+  parentCommunication: string
+  isAIGenerated: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateReportDto {
+  userId: string
+  studentId: string
+  content: string
+  summary: string
+  parentCommunication: string
+  isAIGenerated: false
+}
+
+export interface GenerateReportDto {
+  userId: string
+  studentId: string
+  additionalInstructions?: string
+}
+
+export interface UpdateReportDto {
+  id: string
+  requestingUserId: string
+  studentId: string
+  content: string
+  summary: string
+  parentCommunication: string
+  isAIGenerated: boolean
+}
+
+export interface ReportsListParams {
+  userId: string
+  studentId?: string
+  page?: number
+  pageSize?: number
+  isAIGenerated?: boolean
+}
+
 export interface LessonPlan {
   id: string
   teacherId: string

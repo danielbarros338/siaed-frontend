@@ -80,8 +80,7 @@ export function StudentForm(props: StudentFormProps) {
     if (mode === 'create') {
       ;(props as CreateMode).onSubmit(cleaned)
     } else {
-      const editData = { ...cleaned }
-      delete editData.enrollmentDate
+      const { enrollmentDate: _omit, ...editData } = cleaned
       ;(props as EditMode).onSubmit(editData as EditStudentFormValues)
     }
   }

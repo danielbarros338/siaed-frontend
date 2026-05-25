@@ -11,7 +11,7 @@ export default function ActivityDetailError({
 }) {
   return (
     <div className="space-y-3 rounded-md border p-6">
-      <p className="text-sm font-medium text-destructive">Erro ao carregar o plano de aula.</p>
+      <p className="text-sm font-medium text-destructive">Erro ao carregar a atividade.</p>
       <p className="text-sm text-muted-foreground">{error.message || 'Tente novamente em instantes.'}</p>
       <Button type="button" variant="outline" size="sm" onClick={reset}>
         Tentar novamente

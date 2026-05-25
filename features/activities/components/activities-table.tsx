@@ -13,6 +13,7 @@ import { ActivityActions } from '@/features/activities/components/activity-actio
 import { ActivityOriginBadge } from '@/features/activities/components/activity-origin-badge'
 import { ActivityStatusBadge } from '@/features/activities/components/activity-status-badge'
 import type { Activity } from '@/features/activities/types'
+import { getActivityTypeLabel } from '@/features/activities/utils/activity-status'
 
 interface ActivitiesTableProps {
   data: Activity[]
@@ -37,21 +38,21 @@ export function ActivitiesTable({ data, isLoading }: ActivitiesTableProps) {
   return (
     <div className="space-y-3">
       <div className="space-y-3 sm:hidden">
-        {data.map((plan) => (
-          <article key={plan.id} className="rounded-md border p-3">
+        {data.map((activity) => (
+          <article key={activity.id} className="rounded-md border p-3">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <h3 className="truncate text-sm font-semibold">{plan.title}</h3>
-                <p className="text-xs text-muted-foreground">{plan.subject} â€¢ {plan.grade}</p>
+                <h3 className="truncate text-sm font-semibold">{activity.title}</h3>
+                <p className="text-xs text-muted-foreground">{activity.subject} • {activity.grade}</p>
               </div>
-              <ActivityActions plan={plan} />
+              <ActivityActions activity={activity} />
             </div>
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <ActivityStatusBadge status={plan.status} />
-              <ActivityOriginBadge isAIGenerated={plan.isAIGenerated} />
+              <ActivityStatusBadge status={activity.status} />
+              <ActivityOriginBadge isAIGenerated={activity.isAIGenerated} />
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
-              {plan.durationMinutes} min â€¢ Criado em {formatDateBr(plan.createdAt)}
+              {getActivityTypeLabel(activity.type)} • Criado em {formatDateBr(activity.createdAt)}
             </p>
           </article>
         ))}
@@ -61,32 +62,32 @@ export function ActivitiesTable({ data, isLoading }: ActivitiesTableProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>TÃ­tulo</TableHead>
+              <TableHead>Título</TableHead>
               <TableHead>Disciplina</TableHead>
-              <TableHead>SÃ©rie</TableHead>
-              <TableHead>DuraÃ§Ã£o</TableHead>
+              <TableHead>Série</TableHead>
+              <TableHead>Tipo</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Origem</TableHead>
               <TableHead>Criado em</TableHead>
-              <TableHead className="w-16 text-right">AÃ§Ãµes</TableHead>
+              <TableHead className="w-16 text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((plan) => (
-              <TableRow key={plan.id}>
-                <TableCell className="font-medium">{plan.title}</TableCell>
-                <TableCell>{plan.subject}</TableCell>
-                <TableCell>{plan.grade}</TableCell>
-                <TableCell>{plan.durationMinutes} min</TableCell>
+            {data.map((activity) => (
+              <TableRow key={activity.id}>
+                <TableCell className="font-medium">{activity.title}</TableCell>
+                <TableCell>{activity.subject}</TableCell>
+                <TableCell>{activity.grade}</TableCell>
+                <TableCell>{getActivityTypeLabel(activity.type)}</TableCell>
                 <TableCell>
-                  <ActivityStatusBadge status={plan.status} />
+                  <ActivityStatusBadge status={activity.status} />
                 </TableCell>
                 <TableCell>
-                  <ActivityOriginBadge isAIGenerated={plan.isAIGenerated} />
+                  <ActivityOriginBadge isAIGenerated={activity.isAIGenerated} />
                 </TableCell>
-                <TableCell>{formatDateBr(plan.createdAt)}</TableCell>
+                <TableCell>{formatDateBr(activity.createdAt)}</TableCell>
                 <TableCell className="text-right">
-                  <ActivityActions plan={plan} />
+                  <ActivityActions activity={activity} />
                 </TableCell>
               </TableRow>
             ))}

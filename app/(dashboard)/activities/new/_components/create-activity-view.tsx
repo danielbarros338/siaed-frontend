@@ -18,7 +18,7 @@ export function CreateActivityView() {
     return (
       <div className="space-y-4">
         <h1 className="text-2xl font-bold tracking-tight">Acesso negado</h1>
-        <p className="text-sm text-muted-foreground">Apenas professores podem criar planos de aula.</p>
+        <p className="text-sm text-muted-foreground">Apenas professores podem criar atividades.</p>
       </div>
     )
   }
@@ -36,12 +36,12 @@ export function CreateActivityView() {
     <div className="space-y-6">
       <Link href="/activities" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="h-4 w-4" />
-        Planos de aula
+        Atividades
       </Link>
 
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Criar plano manual</h1>
-        <p className="text-muted-foreground">Preencha os campos pedagÃ³gicos para criar o plano de aula.</p>
+        <h1 className="text-2xl font-bold tracking-tight">Criar atividade manual</h1>
+        <p className="text-muted-foreground">Preencha os campos para criar a atividade.</p>
       </div>
 
       <div className="max-w-3xl">

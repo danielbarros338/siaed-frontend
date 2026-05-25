@@ -4,9 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ActivityOriginBadge } from '@/features/activities/components/activity-origin-badge'
 import { ActivityStatusBadge } from '@/features/activities/components/activity-status-badge'
 import type { Activity } from '@/features/activities/types'
+import { getActivityTypeLabel } from '@/features/activities/utils/activity-status'
 
 interface ActivityDetailCardProps {
-  plan: Activity
+  activity: Activity
 }
 
 function formatDateTime(value: string) {
@@ -16,33 +17,35 @@ function formatDateTime(value: string) {
   }).format(new Date(value))
 }
 
-export function ActivityDetailCard({ plan }: ActivityDetailCardProps) {
+export function ActivityDetailCard({ activity }: ActivityDetailCardProps) {
   return (
     <Card>
       <CardHeader>
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <CardTitle>{plan.title}</CardTitle>
+          <CardTitle>{activity.title}</CardTitle>
           <div className="flex items-center gap-2">
-            <ActivityStatusBadge status={plan.status} />
-            <ActivityOriginBadge isAIGenerated={plan.isAIGenerated} />
+            <ActivityStatusBadge status={activity.status} />
+            <ActivityOriginBadge isAIGenerated={activity.isAIGenerated} />
           </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Field label="Disciplina" value={plan.subject} />
-          <Field label="SÃ©rie" value={plan.grade} />
-          <Field label="Faixa etÃ¡ria" value={plan.ageRange} />
-          <Field label="DuraÃ§Ã£o" value={`${plan.durationMinutes} min`} />
-          <Field label="Criado em" value={formatDateTime(plan.createdAt)} />
-          <Field label="Atualizado em" value={formatDateTime(plan.updatedAt)} />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Field label="Disciplina" value={activity.subject} />
+          <Field label="Série" value={activity.grade} />
+          <Field label="Faixa etária" value={activity.ageRange} />
+          <Field label="Tipo" value={getActivityTypeLabel(activity.type)} />
+          <Field label="Plano vinculado" value={activity.lessonPlanId ?? 'Não vinculado'} />
+          <Field label="Criado em" value={formatDateTime(activity.createdAt)} />
+          <Field label="Atualizado em" value={formatDateTime(activity.updatedAt)} />
         </div>
 
-        <TextBlock label="Objetivos" value={plan.objectives} />
-        <TextBlock label="ConteÃºdo" value={plan.content} />
-        <TextBlock label="Metodologia" value={plan.methodology} />
-        <TextBlock label="Recursos" value={plan.resources} />
-        <TextBlock label="AvaliaÃ§Ã£o" value={plan.evaluation} />
+        <TextBlock label="Descrição" value={activity.description ?? 'Sem descrição.'} />
+        <TextBlock label="Conteúdo" value={activity.content} />
+        {activity.answerKey && <TextBlock label="Gabarito" value={activity.answerKey} />}
+        {activity.simplifiedVersion && (
+          <TextBlock label="Versão simplificada" value={activity.simplifiedVersion} />
+        )}
       </CardContent>
     </Card>
   )

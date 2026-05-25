@@ -34,12 +34,12 @@ export function PublishActivityDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent aria-labelledby={titleId} aria-describedby={descriptionId}>
         <AlertDialogHeader>
-          <AlertDialogTitle id={titleId}>Publicar plano</AlertDialogTitle>
+          <AlertDialogTitle id={titleId}>Publicar atividade</AlertDialogTitle>
           <AlertDialogDescription id={descriptionId}>
-            Esta aÃ§Ã£o torna o plano visÃ­vel como publicado.
+            Esta ação torna a atividade visível como publicada.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <p className="text-sm text-muted-foreground">Deseja publicar o plano {title}?</p>
+        <p className="text-sm text-muted-foreground">Deseja publicar a atividade {title}?</p>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>Cancelar</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm} disabled={isPending}>

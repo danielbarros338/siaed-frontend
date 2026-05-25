@@ -14,10 +14,10 @@ export function useArchiveActivity(id: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.activities.detail(id) })
       queryClient.invalidateQueries({ queryKey: queryKeys.activities.all })
-      toast.success('Plano de aula arquivado com sucesso!')
+      toast.success('Atividade arquivada com sucesso!')
     },
     onError: (error) => {
-      toast.error(extractActivityErrors(error)[0] ?? 'NÃ£o foi possÃ­vel arquivar o plano de aula.')
+      toast.error(extractActivityErrors(error)[0] ?? 'Não foi possível arquivar a atividade.')
     },
   })
 }
