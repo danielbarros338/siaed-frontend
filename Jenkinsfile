@@ -8,7 +8,7 @@ pipeline {
         SSH_CREDENTIALS     = 'ssh-prod-server'
         REMOTE_APP_DIR      = '/root/siaed-client'
 
-        NEXT_PUBLIC_API_URL = "${env.siaed_url_api}"
+        NEXT_PUBLIC_API_URL = credentials('siaed_url_api')
 
         HOME                = '/tmp'
         NPM_CONFIG_CACHE    = '/tmp/.npm'
@@ -36,9 +36,14 @@ pipeline {
             steps {
                 sshagent(credentials: [env.SSH_CREDENTIALS]) {
                     sh """
-                        test -n "${NEXT_PUBLIC_API_URL}"
                         ssh -o StrictHostKeyChecking=no ${PROD_USER}@${PROD_HOST} '
                         set -e
+
+                        if [ ! -d "${REMOTE_APP_DIR}/.git" ]; then
+                            echo "Diretorio nao encontrado. Clonando repositorio..."
+                            git clone https://github.com/danielbarros338/siaed-frontend.git ${REMOTE_APP_DIR}
+                        fi
+
                         cd ${REMOTE_APP_DIR}
 
                         echo "Commit antes:"
