@@ -8,12 +8,34 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
+function resolveInitialAuthState(): AuthState {
+  const token = getTokenFromCookie()
+  if (!token) {
+    return { user: null, isAuthenticated: false, isLoading: false }
+  }
+
+  const payload = decodeJwtPayload(token)
+  if (!payload || payload.exp < Date.now() / 1000) {
+    return { user: null, isAuthenticated: false, isLoading: false }
+  }
+
+  const stored = getStoredUser()
+  if (stored) {
+    return { user: stored, isAuthenticated: true, isLoading: false }
+  }
+
+  const user: UserSession = {
+    userId: payload.sub,
+    name: payload.name ?? '',
+    email: payload.email ?? '',
+    role: Number(payload.role) as UserSession['role'],
+  }
+
+  return { user, isAuthenticated: true, isLoading: false }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [state, setState] = useState<AuthState>({
-    user: null,
-    isAuthenticated: false,
-    isLoading: true,
-  })
+  const [state, setState] = useState<AuthState>(resolveInitialAuthState)
 
   const setUser = useCallback((user: UserSession) => {
     setState({ user, isAuthenticated: true, isLoading: false })
@@ -27,44 +49,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const token = getTokenFromCookie()
+    const payload = token ? decodeJwtPayload(token) : null
+    const isValid = Boolean(payload && payload.exp >= Date.now() / 1000)
 
-    if (!token) {
-      // Cenário 4: sem cookie → unauthenticated
-      setState({ user: null, isAuthenticated: false, isLoading: false })
+    if (!isValid) {
+      clearAuthCookie()
+      clearStoredUser()
       return
     }
 
-    // Verificar expiração via JWT payload
-    const payload = decodeJwtPayload(token)
-    if (payload && payload.exp < Date.now() / 1000) {
-      // Cenário 3: cookie + expirado → clearAuth
-      clearAuth()
-      return
+    if (state.user && !getStoredUser()) {
+      setStoredUser(state.user)
     }
-
-    // Tentar restaurar de sessionStorage (fast path)
-    const stored = getStoredUser()
-    if (stored) {
-      // Cenário 1: cookie + sessionStorage → fast path
-      setState({ user: stored, isAuthenticated: true, isLoading: false })
-      return
-    }
-
-    // Cenário 2: cookie + sem sessionStorage → decodificar JWT
-    if (payload) {
-      const user: UserSession = {
-        userId: payload.sub,
-        name: payload.name ?? '',
-        email: payload.email ?? '',
-        role: (Number(payload.role) as UserSession['role']),
-      }
-      setStoredUser(user)
-      setState({ user, isAuthenticated: true, isLoading: false })
-    } else {
-      // Token inválido
-      clearAuth()
-    }
-  }, [clearAuth])
+  }, [state.user])
 
   const value: AuthContextValue = {
     ...state,
