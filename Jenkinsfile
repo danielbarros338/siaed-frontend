@@ -57,9 +57,9 @@ pipeline {
 
                         export NEXT_PUBLIC_API_URL="${NEXT_PUBLIC_API_URL}"
                         docker compose down --remove-orphans || true
-                        CONTAINERS_ON_PORT=\$(docker ps -q --filter "publish=90")
+                        CONTAINERS_ON_PORT=\$(docker ps -q --filter "publish=9090")
                         if [ -n "\$CONTAINERS_ON_PORT" ]; then
-                            echo "Parando containers na porta 90..."
+                            echo "Parando containers na porta 9090..."
                             docker stop \$CONTAINERS_ON_PORT
                         fi
                         docker compose build --no-cache
