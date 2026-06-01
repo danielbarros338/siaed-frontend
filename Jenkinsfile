@@ -56,7 +56,12 @@ pipeline {
                         git rev-parse --short HEAD
 
                         export NEXT_PUBLIC_API_URL="${NEXT_PUBLIC_API_URL}"
-                        docker compose down
+                        docker compose down --remove-orphans || true
+                        CONTAINERS_ON_PORT=\$(docker ps -q --filter "publish=90")
+                        if [ -n "\$CONTAINERS_ON_PORT" ]; then
+                            echo "Parando containers na porta 90..."
+                            docker stop \$CONTAINERS_ON_PORT
+                        fi
                         docker compose build --no-cache
                         docker compose up -d --force-recreate
                         '
