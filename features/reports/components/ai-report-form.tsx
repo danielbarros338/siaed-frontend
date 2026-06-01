@@ -2,12 +2,12 @@
 
 import { Button } from '@/components/ui/button'
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -171,7 +171,7 @@ export function AIReportForm({ prefilledStudentId }: AIReportFormProps) {
                     min={1}
                     step={1}
                     disabled={isPending || !useHistoricalReports}
-                    value={field.value}
+                    value={typeof field.value === 'number' ? field.value : ''}
                     onChange={(event) => {
                       const rawValue = event.target.value
                       field.onChange(rawValue === '' ? 0 : Number(rawValue))

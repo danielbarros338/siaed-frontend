@@ -11,12 +11,16 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { extractApiErrors, useRegister } from '@/features/auth/hooks/use-register'
-import { registerSchema, type RegisterFormValues } from '@/features/auth/schemas/register-schema'
+import {
+  registerSchema,
+  type RegisterFormInput,
+  type RegisterFormValues,
+} from '@/features/auth/schemas/register-schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 
 export function RegisterForm() {
-  const form = useForm<RegisterFormValues>({
+  const form = useForm<RegisterFormInput, undefined, RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: '',
