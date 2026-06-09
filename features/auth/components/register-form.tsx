@@ -25,15 +25,12 @@ export function RegisterForm() {
     defaultValues: {
       name: '',
       email: '',
-      password: '',
-      subject: '',
-      schoolId: '',
+      password: ''
     },
   })
 
   const mutation = useRegister()
   const apiErrors = mutation.error ? extractApiErrors(mutation.error) : []
-  const selectedRole = form.watch('role')
 
   return (
     <Form {...form}>
@@ -43,9 +40,7 @@ export function RegisterForm() {
             name: data.name,
             email: data.email,
             password: data.password,
-            role: data.role,
-            subject: data.subject ?? null,
-            schoolId: data.schoolId ?? null,
+            role: data.role
           })
         )}
         className="space-y-4"
@@ -123,36 +118,6 @@ export function RegisterForm() {
                   <SelectItem value="3">Coordenador</SelectItem>
                 </SelectContent>
               </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {selectedRole === 1 && (
-          <FormField
-            control={form.control}
-            name="subject"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Disciplina</FormLabel>
-                <FormControl>
-                  <Input placeholder="Ex: Matemática" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
-
-        <FormField
-          control={form.control}
-          name="schoolId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>ID da Escola (opcional)</FormLabel>
-              <FormControl>
-                <Input placeholder="ID da escola" {...field} />
-              </FormControl>
               <FormMessage />
             </FormItem>
           )}

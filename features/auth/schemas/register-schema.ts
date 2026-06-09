@@ -7,21 +7,7 @@ export const registerSchema = z
     password: z.string().min(8, 'Mínimo 8 caracteres'),
     role: z.union([z.literal(1), z.literal(2), z.literal(3)], {
       error: () => ({ message: 'Selecione um perfil' }),
-    }),
-    subject: z.string().optional(),
-    schoolId: z
-      .string()
-      .optional()
-      .transform((val) => (val === '' ? undefined : val)),
-  })
-  .superRefine((data, ctx) => {
-    if (data.role === 1 && !data.subject) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Disciplina é obrigatória para professores',
-        path: ['subject'],
-      })
-    }
+    }),    
   })
 
 export type RegisterFormInput = z.input<typeof registerSchema>
