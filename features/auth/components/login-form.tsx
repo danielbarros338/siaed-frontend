@@ -147,7 +147,7 @@ export function LoginForm() {
 
       {/* Register CTA */}
       <Button variant="outline" size="lg" className="w-full rounded-xl gap-3 border-[#003a8c]/30 text-[#003a8c] hover:bg-[#003a8c]/5" type="button" asChild>
-        <Link href="/register">
+        <Link href="/register-escola">
           <LayoutGrid className="size-4" />
           Cadastrar minha Escola
         </Link>
@@ -157,7 +157,7 @@ export function LoginForm() {
       <div className="space-y-1 text-center">
         <p className="text-xs text-slate-400">Sua escola ainda não usa a Siaed?</p>
         <Link
-          href="/register"
+          href="/register-escola"
           className="inline-flex items-center gap-1 text-sm font-semibold text-[#003a8c] hover:underline underline-offset-4"
         >
           Comece agora gratuitamente
