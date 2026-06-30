@@ -4,17 +4,17 @@ import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '@/components/ui/select'
 import { extractApiErrors, useRegister } from '@/features/auth/hooks/use-register'
 import {
-  registerSchema,
-  type RegisterFormInput,
-  type RegisterFormValues,
+    registerSchema,
+    type RegisterFormInput,
+    type RegisterFormValues,
 } from '@/features/auth/schemas/register-schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -43,14 +43,16 @@ export function RegisterForm() {
             role: data.role
           })
         )}
-        className="space-y-4"
+        className="space-y-5"
       >
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome completo</FormLabel>
+            <FormItem className="space-y-2">
+              <FormLabel className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                Nome completo
+              </FormLabel>
               <FormControl>
                 <Input placeholder="Seu nome" autoComplete="name" {...field} />
               </FormControl>
@@ -63,8 +65,10 @@ export function RegisterForm() {
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>E-mail</FormLabel>
+            <FormItem className="space-y-2">
+              <FormLabel className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                Email
+              </FormLabel>
               <FormControl>
                 <Input
                   type="email"
@@ -82,8 +86,10 @@ export function RegisterForm() {
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Senha</FormLabel>
+            <FormItem className="space-y-2">
+              <FormLabel className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                Senha
+              </FormLabel>
               <FormControl>
                 <Input
                   type="password"
@@ -101,8 +107,10 @@ export function RegisterForm() {
           control={form.control}
           name="role"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Perfil</FormLabel>
+            <FormItem className="space-y-2">
+              <FormLabel className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                Perfil
+              </FormLabel>
               <Select
                 onValueChange={(value) => field.onChange(Number(value) as 1 | 2 | 3)}
                 value={field.value ? String(field.value) : ''}
@@ -124,14 +132,14 @@ export function RegisterForm() {
         />
 
         {apiErrors.length > 0 && (
-          <ul className="text-destructive text-sm space-y-1">
+          <ul className="space-y-1 rounded-2xl border border-destructive/15 bg-destructive/5 px-4 py-3 text-sm text-destructive">
             {apiErrors.map((err, i) => (
               <li key={i}>{err}</li>
             ))}
           </ul>
         )}
 
-        <Button type="submit" className="w-full" disabled={mutation.isPending}>
+        <Button type="submit" variant="brand" size="lg" className="w-full" disabled={mutation.isPending}>
           {mutation.isPending ? 'Cadastrando...' : 'Cadastrar'}
         </Button>
       </form>
