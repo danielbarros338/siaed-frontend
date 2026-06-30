@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/providers/auth-provider";
+import { MockProvider } from "@/lib/providers/mock-provider";
 import { QueryProvider } from "@/lib/providers/query-provider";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
@@ -28,10 +29,12 @@ export default function RootLayout({
       className={`${roboto.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background">
-        <QueryProvider>
-          <AuthProvider>{children}</AuthProvider>
-          <Toaster />
-        </QueryProvider>
+        <MockProvider>
+          <QueryProvider>
+            <AuthProvider>{children}</AuthProvider>
+            <Toaster />
+          </QueryProvider>
+        </MockProvider>
       </body>
     </html>
   );
