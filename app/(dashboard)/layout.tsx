@@ -1,4 +1,4 @@
-import { Header } from '@/components/layout/header'
+import { Sidebar } from '@/components/layout/sidebar'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
@@ -32,11 +32,11 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <div className="flex-1">
-        <div className="container-app py-6">{children}</div>
-      </div>
+    <div className="min-h-screen flex">
+      <Sidebar />
+      <main className="flex-1 min-w-0 p-6 md:p-8">
+        {children}
+      </main>
     </div>
   )
 }

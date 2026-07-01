@@ -476,6 +476,22 @@ export const MOCK_REPORTS = [
   },
 ]
 
+// ─── Usuários mock adicionais ─────────────────────────────────────────────────
+export const MOCK_ADMIN_ID = 'aaaaaaaa-0010-0010-0010-aaaaaaaaaaaa'
+export const MOCK_PEDAGOG_ID = 'aaaaaaaa-0020-0020-0020-aaaaaaaaaaaa'
+
+// role 2 = Diretor | payload: { sub: MOCK_ADMIN_ID, name: "Admin Principal", email: "admin@admin.com", role: "2", exp: 4102444800, iat: 1700000000 }
+export const MOCK_ADMIN_JWT =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' +
+  '.eyJzdWIiOiJhYWFhYWFhYS0wMDEwLTAwMTAtMDAxMC1hYWFhYWFhYWFhYWEiLCJuYW1lIjoiQWRtaW4gUHJpbmNpcGFsIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJyb2xlIjoiMiIsImV4cCI6NDEwMjQ0NDgwMCwiaWF0IjoxNzAwMDAwMDAwfQ' +
+  '.mocksignature'
+
+// role 1 = Professor | payload: { sub: MOCK_PEDAGOG_ID, name: "Dra. Helena Silva", email: "pedagogical@pedagogical.com", role: "1", exp: 4102444800, iat: 1700000000 }
+export const MOCK_PEDAGOG_JWT =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' +
+  '.eyJzdWIiOiJhYWFhYWFhYS0wMDIwLTAwMjAtMDAyMC1hYWFhYWFhYWFhYWEiLCJuYW1lIjoiRHJhLiBIZWxlbmEgU2lsdmEiLCJlbWFpbCI6InBlZGFnb2dpY2FsQHBlZGFnb2dpY2FsLmNvbSIsInJvbGUiOiIxIiwiZXhwIjo0MTAyNDQ0ODAwLCJpYXQiOjE3MDAwMDAwMDB9' +
+  '.mocksignature'
+
 // ─── Notas ────────────────────────────────────────────────────────────────────
 export const GRADE_IDS = [
   '22222222-0001-0001-0001-222222222222',
