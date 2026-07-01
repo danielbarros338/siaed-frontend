@@ -25,7 +25,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { href: '/', label: 'Dashboard', icon: <LayoutDashboard className="h-4 w-4" /> },
-  { href: '/lesson-plans', label: 'Pedagógico', icon: <GraduationCap className="h-4 w-4" /> },
+  { href: '/pedagogico', label: 'Pedagógico', icon: <GraduationCap className="h-4 w-4" /> },
   { href: '/reports', label: 'Comunicação', icon: <MessageSquare className="h-4 w-4" /> },
   { href: '/students', label: 'Usuários', icon: <Users className="h-4 w-4" /> },
   { href: '/settings', label: 'Configurações', icon: <Settings className="h-4 w-4" />, disabled: true },

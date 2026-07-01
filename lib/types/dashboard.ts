@@ -50,9 +50,11 @@ export interface TeacherMetrics {
   planosAulaPendentes: number
 }
 
+export type SaudeComportamental = 'positivo' | 'neutro' | 'tenso' | 'critico'
+
 export interface TeacherAiInsight {
   id: string
-  tipo: 'critico' | 'atencao' | 'positivo'
+  tipo: 'critico' | 'atencao' | 'positivo' | 'comportamental'
   titulo: string
   descricao: string
 }

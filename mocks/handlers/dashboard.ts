@@ -92,6 +92,12 @@ const TEACHER_MOCK: TeacherDashboardData = {
       titulo: 'Evolução Positiva',
       descricao: 'Fernanda Costa melhorou 2,0 pontos desde o início do trimestre.',
     },
+    {
+      id: '4',
+      tipo: 'comportamental',
+      titulo: 'Clima de Sala Tenso — 5º Ano A',
+      descricao: 'Registrados 3 episódios de conflito interpessoal nos últimos encontros. Considere dinâmicas de integração antes da próxima avaliação.',
+    },
   ],
   chartData: CHART_DATA,
   alunosEmRisco: [
