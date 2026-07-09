@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { ClassForm } from '@/features/classes/components/class-form'
 import { useClassDetail } from '@/features/classes/hooks/use-class-detail'
 import { useUpdateClass } from '@/features/classes/hooks/use-update-class'
@@ -92,7 +93,24 @@ export function EditClassView({ id }: EditClassViewProps) {
   }
 
   if (isLoading) {
-    return <div className="space-y-4 text-sm text-muted-foreground">Carregando turma...</div>
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-4 w-16" />
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <div className="max-w-2xl space-y-6">
+          <Skeleton className="h-9 w-full" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+          </div>
+          <Skeleton className="h-32 w-full" />
+          <Skeleton className="h-9 w-32" />
+        </div>
+      </div>
+    )
   }
 
   if (error) {

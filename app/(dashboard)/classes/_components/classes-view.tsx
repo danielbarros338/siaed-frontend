@@ -7,7 +7,7 @@ import { useClasses } from '@/features/classes/hooks/use-classes'
 import { useCurrentUser } from '@/lib/hooks/use-current-user'
 import { useDebounce } from '@/lib/hooks/use-debounce'
 import axios from 'axios'
-import { Search } from 'lucide-react'
+import { ArrowLeft, Search } from 'lucide-react'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 
@@ -30,14 +30,19 @@ export function ClassesView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
+      <Link href="/pedagogico" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+        <ArrowLeft className="h-4 w-4" />
+        Pedagógico
+      </Link>
+
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Turmas</h1>
           <p className="text-sm text-muted-foreground">Gerencie as turmas cadastradas no sistema.</p>
         </div>
 
         {canWrite && (
-          <Button asChild>
+          <Button asChild className="text-white bg-[linear-gradient(135deg,#d97706_0%,#b45309_100%)] border-0 hover:opacity-90">
             <Link href="/classes/new">Inserir turma</Link>
           </Button>
         )}

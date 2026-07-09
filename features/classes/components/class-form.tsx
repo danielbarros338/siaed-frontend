@@ -217,7 +217,11 @@ export function ClassForm(props: ClassFormProps) {
           }}
         />
 
-        <Button type="submit" disabled={isSubmitting}>
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="text-white bg-[linear-gradient(135deg,#d97706_0%,#b45309_100%)] border-0 hover:opacity-90"
+        >
           {isSubmitting ? 'Salvando...' : mode === 'create' ? 'Cadastrar turma' : 'Salvar alterações'}
         </Button>
       </form>

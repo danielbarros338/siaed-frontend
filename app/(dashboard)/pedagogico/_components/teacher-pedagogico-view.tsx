@@ -302,23 +302,21 @@ export function TeacherPedagogicoView() {
         </Link>
 
         {/* Comunicação */}
-        <Link href="/reports" className="block group">
-          <Card className="cursor-pointer transition-all hover:border-[#0066cc]/40 hover:shadow-sm h-full">
-            <CardContent className="pt-4 pb-3">
-              <div className="flex items-start gap-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                  <MessageSquare className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
-                    Comunicação
-                  </p>
-                  <p className="text-sm font-semibold">2 Mensagens de Pais</p>
-                </div>
+        <Card className="h-full opacity-50 cursor-not-allowed">
+          <CardContent className="pt-4 pb-3">
+            <div className="flex items-start gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                <MessageSquare className="h-4 w-4" />
               </div>
-            </CardContent>
-          </Card>
-        </Link>
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
+                  Comunicação
+                </p>
+                <p className="text-sm font-semibold">2 Mensagens de Pais</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* ── Minhas Turmas + Agenda ──────────────────────────────────────────── */}
