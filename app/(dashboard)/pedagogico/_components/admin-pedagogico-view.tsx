@@ -212,15 +212,15 @@ export function AdminPedagogicoView() {
 
       {/* ── Planos de Aula + Saúde Operacional ────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Planos de Aula */}
-        <Link href="/lesson-plans" className="block group">
+        {/* Planos Pedagógicos */}
+        <Link href="/plans" className="block group">
           <Card className="cursor-pointer transition-all hover:border-[#0066cc]/40 hover:shadow-sm h-full">
             <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
               <div className="flex items-center gap-2">
                 <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[#0066cc]/10 text-[#0066cc]">
                   <ClipboardList className="h-4 w-4" />
                 </div>
-                <CardTitle className="text-sm font-semibold">Planos de Aula</CardTitle>
+                <CardTitle className="text-sm font-semibold">Planos Pedagógicos</CardTitle>
               </div>
               <ExternalLink className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
             </CardHeader>

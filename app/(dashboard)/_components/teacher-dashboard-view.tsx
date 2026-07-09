@@ -4,6 +4,7 @@ import { useState } from 'react'
 import {
   AlertTriangle,
   BookOpen,
+  Brain,
   CheckCircle,
   ClipboardList,
   TrendingUp,
@@ -94,6 +95,12 @@ const INSIGHT_CONFIG = {
     icon: <CheckCircle className="h-3.5 w-3.5" />,
     badgeClass: 'bg-green-50 text-green-700 border-green-300',
     borderClass: 'border-l-green-500',
+  },
+  comportamental: {
+    label: 'Saúde Comportamental',
+    icon: <Brain className="h-3.5 w-3.5" />,
+    badgeClass: 'bg-violet-50 text-violet-700 border-violet-300',
+    borderClass: 'border-l-violet-500',
   },
 } as const
 

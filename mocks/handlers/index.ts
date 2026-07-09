@@ -7,11 +7,13 @@ import { lessonPlanHandlers } from './lesson-plans'
 import { reportHandlers } from './reports'
 import { studentHandlers } from './students'
 import { teacherHandlers } from './teachers'
+import { teachingPlanHandlers } from './teaching-plans'
 
 export const handlers = [
   ...authHandlers,
   ...dashboardHandlers,
   ...lessonPlanHandlers,
+  ...teachingPlanHandlers,
   ...activityHandlers,
   ...classHandlers,
   ...studentHandlers,

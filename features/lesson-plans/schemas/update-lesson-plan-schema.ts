@@ -7,6 +7,7 @@ export const updateLessonPlanSchema = z.object({
   methodology: z.string().min(10, 'Metodologia deve ter no mínimo 10 caracteres'),
   resources: z.string().min(10, 'Recursos deve ter no mínimo 10 caracteres'),
   evaluation: z.string().min(10, 'Avaliação deve ter no mínimo 10 caracteres'),
+  references: z.string().min(10, 'Referências deve ter no mínimo 10 caracteres'),
 })
 
 export type UpdateLessonPlanFormValues = z.infer<typeof updateLessonPlanSchema>

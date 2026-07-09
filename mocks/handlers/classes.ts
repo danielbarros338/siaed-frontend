@@ -35,8 +35,15 @@ export const classHandlers = [
     const page = Number(url.searchParams.get('page') ?? 1)
     const pageSize = Number(url.searchParams.get('pageSize') ?? 20)
     const search = url.searchParams.get('search')?.toLowerCase()
+    const teacherId = url.searchParams.get('teacherId')
 
     let items = classesList
+    if (teacherId) {
+      const allowedIds = new Set(
+        classes.filter((c) => c.teacherIds?.includes(teacherId)).map((c) => c.id),
+      )
+      items = items.filter((c) => allowedIds.has(c.id))
+    }
     if (search) items = items.filter((c) => c.name.toLowerCase().includes(search) || c.grade.toLowerCase().includes(search))
 
     return HttpResponse.json(makePagedResult(items, page, pageSize))

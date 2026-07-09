@@ -73,16 +73,16 @@ export function LessonPlanDetailView({ id }: LessonPlanDetailViewProps) {
       </Link>
 
       <div className="flex flex-wrap items-center gap-2">
-        <Button asChild variant="outline" size="sm" disabled={isBusy}>
+        <Button asChild variant="outline" size="sm" disabled={isBusy} className="hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700">
           <Link href={`/lesson-plans/${id}/edit`}>
             <Pencil className="mr-1 size-4" />
             Editar
           </Link>
         </Button>
-        <Button type="button" size="sm" variant="outline" disabled={plan.status !== 1 || isBusy} onClick={() => setPublishOpen(true)}>
+        <Button type="button" size="sm" variant="outline" disabled={plan.status !== 1 || isBusy} onClick={() => setPublishOpen(true)} className="hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700">
           Publicar
         </Button>
-        <Button type="button" size="sm" variant="outline" disabled={plan.status === 3 || isBusy} onClick={() => setArchiveOpen(true)}>
+        <Button type="button" size="sm" variant="outline" disabled={plan.status === 3 || isBusy} onClick={() => setArchiveOpen(true)} className="hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700">
           Arquivar
         </Button>
         <Button type="button" size="sm" variant="destructive" disabled={isBusy} onClick={() => setDeleteOpen(true)}>

@@ -1,7 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useTeacherDashboard } from '@/features/dashboard/hooks/use-teacher-dashboard'
+import { useCurrentUser } from '@/lib/hooks/use-current-user'
+import type { SaudeComportamental, TeacherAiInsight } from '@/lib/types/dashboard'
+import { cn } from '@/lib/utils'
 import {
   AlertTriangle,
   BookOpen,
@@ -17,13 +22,8 @@ import {
   TrendingDown,
   Users,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { useTeacherDashboard } from '@/features/dashboard/hooks/use-teacher-dashboard'
-import { useCurrentUser } from '@/lib/hooks/use-current-user'
-import { cn } from '@/lib/utils'
-import type { SaudeComportamental, TeacherAiInsight } from '@/lib/types/dashboard'
+import Link from 'next/link'
+import { useState } from 'react'
 
 // ─── AI Insight config ────────────────────────────────────────────────────────
 
@@ -260,7 +260,7 @@ export function TeacherPedagogicoView() {
       {/* ── Notification alert cards ────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Documentação */}
-        <Link href="/lesson-plans" className="block group">
+        <Link href="/plans" className="block group">
           <Card className="cursor-pointer transition-all hover:border-[#0066cc]/40 hover:shadow-sm h-full">
             <CardContent className="pt-4 pb-3">
               <div className="flex items-start gap-3">
@@ -269,7 +269,7 @@ export function TeacherPedagogicoView() {
                 </div>
                 <div>
                   <p className="text-[10px] font-semibold uppercase tracking-wider text-[#0066cc] mb-0.5">
-                    Documentação
+                    Planos
                   </p>
                   <p className="text-sm font-semibold">
                     {metrics.planosAulaPendentes} Planos Pendentes

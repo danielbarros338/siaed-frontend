@@ -47,10 +47,10 @@ export function LessonPlansView() {
         </div>
 
         <div className="flex gap-2">
-          <Button asChild variant="outline">
+          <Button asChild variant="outline" className="hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700">
             <Link href="/lesson-plans/generate">Gerar com IA</Link>
           </Button>
-          <Button asChild>
+          <Button asChild className="text-white bg-[linear-gradient(135deg,#7c3aed_0%,#5b21b6_100%)] border-0 hover:opacity-90">
             <Link href="/lesson-plans/new">Criar manualmente</Link>
           </Button>
         </div>

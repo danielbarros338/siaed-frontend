@@ -4,6 +4,11 @@ export const queryKeys = {
     list: (params: object) => ['lesson-plans', 'list', params] as const,
     detail: (id: string) => ['lesson-plans', 'detail', id] as const,
   },
+  teachingPlans: {
+    all: ['teaching-plans'] as const,
+    list: (params: object) => ['teaching-plans', 'list', params] as const,
+    detail: (id: string) => ['teaching-plans', 'detail', id] as const,
+  },
   activities: {
     all: ['activities'] as const,
     list: (params: object) => ['activities', 'list', params] as const,

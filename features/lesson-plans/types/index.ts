@@ -15,6 +15,8 @@ export interface LessonPlan {
   methodology: string
   resources: string
   evaluation: string
+  /** Mock-only: not yet in the real LessonPlansController contract (docs/backend-state.md §3.3). */
+  references: string
   ageRange: string
   isAIGenerated: boolean
   status: LessonPlanStatus
@@ -41,6 +43,7 @@ export interface CreateLessonPlanRequest {
   methodology: string
   resources: string
   evaluation: string
+  references: string
   ageRange: string
 }
 
@@ -62,6 +65,7 @@ export interface UpdateLessonPlanRequest {
   methodology: string
   resources: string
   evaluation: string
+  references: string
 }
 
 export interface CreateLessonPlanFormValues {
@@ -74,6 +78,7 @@ export interface CreateLessonPlanFormValues {
   methodology: string
   resources: string
   evaluation: string
+  references: string
   ageRange: string
 }
 
@@ -92,6 +97,7 @@ export interface UpdateLessonPlanFormValues {
   methodology: string
   resources: string
   evaluation: string
+  references: string
 }
 
 export type LessonPlansPagedResult = PagedResult<LessonPlan>

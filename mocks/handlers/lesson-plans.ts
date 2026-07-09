@@ -63,6 +63,7 @@ export const lessonPlanHandlers = [
       methodology: (body.methodology as string) ?? '',
       resources: (body.resources as string) ?? '',
       evaluation: (body.evaluation as string) ?? '',
+      references: (body.references as string) ?? '',
       ageRange: (body.ageRange as string) ?? '',
       isAIGenerated: false,
       status: 1,
@@ -88,6 +89,7 @@ export const lessonPlanHandlers = [
       methodology: 'Metodologia ativa com uso de recursos digitais e atividades colaborativas.',
       resources: 'Projetor, computadores, materiais impressos.',
       evaluation: 'Avaliação formativa por meio de observação e produção dos alunos.',
+      references: 'Referências geradas pela IA com base no contexto informado.',
       ageRange: (body.ageRange as string) ?? '',
       isAIGenerated: true,
       status: 1 as const,
@@ -110,6 +112,7 @@ export const lessonPlanHandlers = [
       methodology: (body.methodology as string) ?? lessonPlans[idx].methodology,
       resources: (body.resources as string) ?? lessonPlans[idx].resources,
       evaluation: (body.evaluation as string) ?? lessonPlans[idx].evaluation,
+      references: (body.references as string) ?? lessonPlans[idx].references,
       updatedAt: new Date().toISOString(),
     }
     return new HttpResponse(null, { status: 204 })

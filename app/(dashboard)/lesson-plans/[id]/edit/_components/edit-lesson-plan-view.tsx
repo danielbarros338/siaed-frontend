@@ -82,6 +82,7 @@ export function EditLessonPlanView({ id }: EditLessonPlanViewProps) {
             methodology: plan.methodology,
             resources: plan.resources,
             evaluation: plan.evaluation,
+            references: plan.references,
           }}
           onSubmit={handleSubmit}
           isSubmitting={mutation.isPending}

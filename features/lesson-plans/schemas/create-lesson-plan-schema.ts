@@ -10,6 +10,7 @@ export const createLessonPlanSchema = z.object({
   methodology: z.string().min(10, 'Metodologia deve ter no mínimo 10 caracteres'),
   resources: z.string().min(10, 'Recursos deve ter no mínimo 10 caracteres'),
   evaluation: z.string().min(10, 'Avaliação deve ter no mínimo 10 caracteres'),
+  references: z.string().min(10, 'Referências deve ter no mínimo 10 caracteres'),
   ageRange: z.string().min(2, 'Faixa etária é obrigatória').max(50, 'Faixa etária deve ter no máximo 50 caracteres'),
 })
 

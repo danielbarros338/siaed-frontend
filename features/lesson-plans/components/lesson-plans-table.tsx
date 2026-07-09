@@ -38,7 +38,7 @@ export function LessonPlansTable({ data, isLoading }: LessonPlansTableProps) {
     <div className="space-y-3">
       <div className="space-y-3 sm:hidden">
         {data.map((plan) => (
-          <article key={plan.id} className="rounded-md border p-3">
+          <article key={plan.id} className="rounded-lg border p-3 transition-all hover:border-violet-300 hover:shadow-sm">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <h3 className="truncate text-sm font-semibold">{plan.title}</h3>
@@ -63,7 +63,7 @@ export function LessonPlansTable({ data, isLoading }: LessonPlansTableProps) {
             <TableRow>
               <TableHead>Título</TableHead>
               <TableHead>Disciplina</TableHead>
-              <TableHead>Série</TableHead>
+              <TableHead>Turma</TableHead>
               <TableHead>Duração</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Origem</TableHead>

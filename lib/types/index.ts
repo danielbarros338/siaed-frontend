@@ -260,6 +260,7 @@ export interface ClassesListParams {
   page?: number
   pageSize?: number
   search?: string
+  teacherId?: string
 }
 
 export interface Grade {
