@@ -1,5 +1,6 @@
 import { http, HttpResponse } from 'msw'
-import { MOCK_CLASS_LIST, MOCK_CLASSES } from '../data/seed'
+import { MOCK_CLASS_LIST, MOCK_CLASSES, MOCK_TEACHER_ID } from '../data/seed'
+import { makePagedResult } from './utils'
 
 let classes = structuredClone(MOCK_CLASSES)
 let classesList = structuredClone(MOCK_CLASS_LIST)
@@ -11,22 +12,14 @@ function syncList() {
     grade: c.grade,
     schoolYear: c.schoolYear,
     status: c.status,
+    createdBy: c.createdBy,
   }))
 }
 
-function makePagedResult<T>(items: T[], page: number, pageSize: number) {
-  const start = (page - 1) * pageSize
-  const paged = items.slice(start, start + pageSize)
-  const totalPages = Math.max(1, Math.ceil(items.length / pageSize))
-  return {
-    items: paged,
-    totalCount: items.length,
-    page,
-    pageSize,
-    totalPages,
-    hasNextPage: page < totalPages,
-    hasPreviousPage: page > 1,
-  }
+function isOwnershipViolation(requestUrl: URL, createdBy: string) {
+  const requestingRole = Number(requestUrl.searchParams.get('requestingRole') ?? 0)
+  const requestingUserId = requestUrl.searchParams.get('requestingUserId') ?? ''
+  return requestingRole === 1 && createdBy !== requestingUserId
 }
 
 export const classHandlers = [
@@ -57,6 +50,7 @@ export const classHandlers = [
 
   http.post('*/api/v1/classes', async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>
+    const url = new URL(request.url)
     const newId = crypto.randomUUID()
     const newClass = {
       id: newId,
@@ -65,6 +59,7 @@ export const classHandlers = [
       schoolYear: (body.schoolYear as number) ?? new Date().getFullYear(),
       status: 1 as const,
       createdAt: new Date().toISOString(),
+      createdBy: url.searchParams.get('requestingUserId') || MOCK_TEACHER_ID,
       teacherIds: (body.teacherIds as string[]) ?? [],
       teachers: [],
     }
@@ -75,8 +70,12 @@ export const classHandlers = [
 
   http.put('*/api/v1/classes/:id', async ({ params, request }) => {
     const body = (await request.json()) as Record<string, unknown>
+    const url = new URL(request.url)
     const idx = classes.findIndex((x) => x.id === params.id)
     if (idx === -1) return new HttpResponse(null, { status: 404 })
+    if (isOwnershipViolation(url, classes[idx].createdBy)) {
+      return new HttpResponse(null, { status: 403 })
+    }
     classes[idx] = {
       ...classes[idx],
       name: (body.name as string) ?? classes[idx].name,
@@ -88,17 +87,25 @@ export const classHandlers = [
     return new HttpResponse(null, { status: 204 })
   }),
 
-  http.delete('*/api/v1/classes/:id', ({ params }) => {
+  http.delete('*/api/v1/classes/:id', ({ params, request }) => {
+    const url = new URL(request.url)
     const idx = classes.findIndex((x) => x.id === params.id)
     if (idx === -1) return new HttpResponse(null, { status: 404 })
+    if (isOwnershipViolation(url, classes[idx].createdBy)) {
+      return new HttpResponse(null, { status: 403 })
+    }
     classes.splice(idx, 1)
     syncList()
     return new HttpResponse(null, { status: 204 })
   }),
 
-  http.patch('*/api/v1/classes/:id/reactivate', ({ params }) => {
+  http.patch('*/api/v1/classes/:id/reactivate', ({ params, request }) => {
+    const url = new URL(request.url)
     const idx = classes.findIndex((x) => x.id === params.id)
     if (idx === -1) return new HttpResponse(null, { status: 404 })
+    if (isOwnershipViolation(url, classes[idx].createdBy)) {
+      return new HttpResponse(null, { status: 403 })
+    }
     classes[idx].status = 1
     syncList()
     return new HttpResponse(null, { status: 204 })

@@ -6,6 +6,8 @@ import { ClassForm } from '@/features/classes/components/class-form'
 import { useClassDetail } from '@/features/classes/hooks/use-class-detail'
 import { useUpdateClass } from '@/features/classes/hooks/use-update-class'
 import type { CreateClassFormValues } from '@/features/classes/schemas/create-class-schema'
+import { canManageClass } from '@/features/classes/utils/class-permissions'
+import { isSelfRegisteredProfessor } from '@/features/classes/utils/professor-scope'
 import { extractApiErrors } from '@/lib/api/auth'
 import { useCurrentUser } from '@/lib/hooks/use-current-user'
 import axios from 'axios'
@@ -49,7 +51,7 @@ export function EditClassView({ id }: EditClassViewProps) {
   const { data: classData, isLoading, error, refetch } = useClassDetail(id)
   const mutation = useUpdateClass(id)
   const { user } = useCurrentUser()
-  const canWrite = user?.role === 2 || user?.role === 3
+  const selfRegistered = isSelfRegisteredProfessor(user)
 
   const apiError = mutation.error ? extractApiErrors(mutation.error)[0] ?? null : null
 
@@ -80,7 +82,11 @@ export function EditClassView({ id }: EditClassViewProps) {
   }
 
   function handleSubmit(values: CreateClassFormValues) {
-    const selectedTeacherIds = values.teacherIds?.filter(Boolean) ?? []
+    // Professor autocadastrado permanece atribuído automaticamente, sem passar pelo checkbox.
+    const selectedTeacherIds =
+      selfRegistered && user
+        ? Array.from(new Set([...initialTeacherIds, user.userId]))
+        : values.teacherIds?.filter(Boolean) ?? []
     const shouldSendTeacherIds = !areTeacherListsEqual(selectedTeacherIds, initialTeacherIds)
 
     mutation.mutate({
@@ -125,22 +131,23 @@ export function EditClassView({ id }: EditClassViewProps) {
     )
   }
 
-  if (!canWrite) {
+  if (!classData) {
+    return null
+  }
+
+  if (!canManageClass(user, classData)) {
     return (
       <div className="space-y-4">
         <h1 className="text-2xl font-bold tracking-tight">Acesso negado</h1>
         <p className="text-sm text-muted-foreground">
-          Apenas coordenadores e diretores podem editar turmas.
+          Você não tem permissão para editar esta turma. Apenas o professor responsável pelo
+          cadastro, diretores ou coordenadores podem editá-la.
         </p>
         <Link href="/classes" className="text-sm underline underline-offset-4 hover:text-primary">
           Voltar para a listagem
         </Link>
       </div>
     )
-  }
-
-  if (!classData) {
-    return null
   }
 
   return (
@@ -173,6 +180,7 @@ export function EditClassView({ id }: EditClassViewProps) {
           onSubmit={handleSubmit}
           isSubmitting={mutation.isPending}
           apiError={apiError}
+          showTeacherSelection={!selfRegistered}
         />
       </div>
     </div>

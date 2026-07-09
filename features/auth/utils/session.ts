@@ -53,6 +53,7 @@ export function persistSession(
     name: response.name,
     email: response.email,
     role: response.role,
+    schoolId: response.schoolId,
   }
 
   setAuthCookie(response.token)

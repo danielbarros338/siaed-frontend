@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react'
 
 describe('classes ui', () => {
   it('renderiza empty state da tabela', () => {
-    render(<ClassesTable data={[]} isLoading={false} canWrite={true} />)
+    render(<ClassesTable data={[]} isLoading={false} canWrite={() => true} canInsert={true} />)
 
     expect(screen.getByText('Nenhuma turma encontrada.')).toBeInTheDocument()
   })

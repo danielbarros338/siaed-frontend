@@ -1,5 +1,6 @@
 import { classesApi } from '@/lib/api/classes'
 import { queryKeys } from '@/lib/hooks/query-keys'
+import { AuthProvider } from '@/lib/providers/auth-provider'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook, waitFor } from '@testing-library/react'
 import { vi } from 'vitest'
@@ -29,7 +30,9 @@ function createWrapper() {
   })
 
   const TestWrapper = ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>{children}</AuthProvider>
+    </QueryClientProvider>
   )
 
   TestWrapper.displayName = 'ClassesHooksTestWrapper'
@@ -47,6 +50,7 @@ describe('classes hooks', () => {
           grade: '5º Ano',
           schoolYear: 2026,
           status: 1,
+          createdBy: 'teacher-1',
         },
       ],
       totalCount: 1,
@@ -78,7 +82,9 @@ describe('classes hooks', () => {
 
     const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries')
     const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>{children}</AuthProvider>
+      </QueryClientProvider>
     )
 
     const { result } = renderHook(() => useDeleteClass('1'), { wrapper })

@@ -2,9 +2,17 @@
 
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ClassActions } from '@/features/classes/components/class-actions'
 import { ClassDetailCard } from '@/features/classes/components/class-detail-card'
 import { useClassDetail } from '@/features/classes/hooks/use-class-detail'
+import { canManageClass } from '@/features/classes/utils/class-permissions'
+import { AttendanceTab } from '@/features/classroom-management/components/attendance-tab'
+import { ClassRoutineTab } from '@/features/classroom-management/components/class-routine-tab'
+import { GroupDynamicsTab } from '@/features/classroom-management/components/group-dynamics-tab'
+import { InclusionProfileTab } from '@/features/classroom-management/components/inclusion-profile-tab'
+import { LearningDiagnosticsTab } from '@/features/classroom-management/components/learning-diagnostics-tab'
+import { SocioemotionalProfileTab } from '@/features/classroom-management/components/socioemotional-profile-tab'
 import { useCurrentUser } from '@/lib/hooks/use-current-user'
 import axios from 'axios'
 import { ArrowLeft } from 'lucide-react'
@@ -17,7 +25,6 @@ interface ClassDetailViewProps {
 export function ClassDetailView({ id }: ClassDetailViewProps) {
   const { data: classData, isLoading, error, refetch } = useClassDetail(id)
   const { user } = useCurrentUser()
-  const canWrite = user?.role === 2 || user?.role === 3
 
   const isNotFound = axios.isAxiosError(error) && error.response?.status === 404
 
@@ -85,13 +92,45 @@ export function ClassDetailView({ id }: ClassDetailViewProps) {
         Turmas
       </Link>
 
-      {canWrite && (
+      {canManageClass(user, classData) && (
         <div className="flex flex-wrap items-center gap-2">
           <ClassActions classData={classData} />
         </div>
       )}
 
-      <ClassDetailCard data={classData} />
+      <Tabs defaultValue="overview">
+        <TabsList className="flex-wrap">
+          <TabsTrigger value="overview">Visão Geral</TabsTrigger>
+          <TabsTrigger value="diagnostics">Diagnósticos</TabsTrigger>
+          <TabsTrigger value="inclusion">Inclusão / PEI</TabsTrigger>
+          <TabsTrigger value="socioemotional">Socioemocional</TabsTrigger>
+          <TabsTrigger value="dynamics">Dinâmica de Grupo</TabsTrigger>
+          <TabsTrigger value="routine">Rotina e Combinados</TabsTrigger>
+          <TabsTrigger value="attendance">Frequência</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview">
+          <ClassDetailCard data={classData} />
+        </TabsContent>
+        <TabsContent value="diagnostics">
+          <LearningDiagnosticsTab classData={classData} />
+        </TabsContent>
+        <TabsContent value="inclusion">
+          <InclusionProfileTab classData={classData} />
+        </TabsContent>
+        <TabsContent value="socioemotional">
+          <SocioemotionalProfileTab classData={classData} />
+        </TabsContent>
+        <TabsContent value="dynamics">
+          <GroupDynamicsTab classData={classData} />
+        </TabsContent>
+        <TabsContent value="routine">
+          <ClassRoutineTab classData={classData} />
+        </TabsContent>
+        <TabsContent value="attendance">
+          <AttendanceTab classData={classData} />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

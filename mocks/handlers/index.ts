@@ -1,6 +1,7 @@
 import { activityHandlers } from './activities'
 import { authHandlers } from './auth'
 import { classHandlers } from './classes'
+import { classroomManagementHandlers } from './classroom-management'
 import { dashboardHandlers } from './dashboard'
 import { gradeHandlers } from './grades'
 import { lessonPlanHandlers } from './lesson-plans'
@@ -16,6 +17,7 @@ export const handlers = [
   ...teachingPlanHandlers,
   ...activityHandlers,
   ...classHandlers,
+  ...classroomManagementHandlers,
   ...studentHandlers,
   ...reportHandlers,
   ...gradeHandlers,

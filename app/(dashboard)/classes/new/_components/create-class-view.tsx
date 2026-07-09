@@ -3,6 +3,8 @@
 import { ClassForm } from '@/features/classes/components/class-form'
 import { useCreateClass } from '@/features/classes/hooks/use-create-class'
 import type { CreateClassFormValues } from '@/features/classes/schemas/create-class-schema'
+import { canCreateClass } from '@/features/classes/utils/class-permissions'
+import { isSelfRegisteredProfessor } from '@/features/classes/utils/professor-scope'
 import { extractApiErrors } from '@/lib/api/auth'
 import { useCurrentUser } from '@/lib/hooks/use-current-user'
 import { ArrowLeft } from 'lucide-react'
@@ -11,12 +13,16 @@ import Link from 'next/link'
 export function CreateClassView() {
   const mutation = useCreateClass()
   const { user } = useCurrentUser()
-  const canWrite = user?.role === 2 || user?.role === 3
+  const canWrite = canCreateClass(user)
+  const selfRegistered = isSelfRegisteredProfessor(user)
 
   const apiError = mutation.error ? extractApiErrors(mutation.error)[0] ?? null : null
 
   function handleSubmit(values: CreateClassFormValues) {
-    const teacherIds = values.teacherIds?.filter(Boolean) ?? []
+    // Professor autocadastrado é atribuído automaticamente à turma que cria, sem passar pelo checkbox.
+    const teacherIds = selfRegistered && user
+      ? [user.userId]
+      : values.teacherIds?.filter(Boolean) ?? []
 
     mutation.mutate({
       name: values.name,
@@ -31,7 +37,7 @@ export function CreateClassView() {
       <div className="space-y-4">
         <h1 className="text-2xl font-bold tracking-tight">Acesso negado</h1>
         <p className="text-sm text-muted-foreground">
-          Apenas coordenadores e diretores podem cadastrar turmas.
+          Apenas professores, diretores e coordenadores podem cadastrar turmas.
         </p>
         <Link href="/classes" className="text-sm underline underline-offset-4 hover:text-primary">
           Voltar para a listagem
@@ -63,6 +69,7 @@ export function CreateClassView() {
           onSubmit={handleSubmit}
           isSubmitting={mutation.isPending}
           apiError={apiError}
+          showTeacherSelection={!selfRegistered}
         />
       </div>
     </div>

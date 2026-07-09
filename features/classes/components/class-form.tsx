@@ -30,6 +30,7 @@ type CreateMode = {
   onSubmit: (data: CreateClassFormValues) => void
   isSubmitting: boolean
   apiError?: string | null
+  showTeacherSelection?: boolean
 }
 
 type EditMode = {
@@ -39,12 +40,13 @@ type EditMode = {
   onSubmit: (data: CreateClassFormValues) => void
   isSubmitting: boolean
   apiError?: string | null
+  showTeacherSelection?: boolean
 }
 
 type ClassFormProps = CreateMode | EditMode
 
 export function ClassForm(props: ClassFormProps) {
-  const { mode, isSubmitting, apiError } = props
+  const { mode, isSubmitting, apiError, showTeacherSelection = true } = props
   const {
     data: teachers,
     isLoading: isTeachersLoading,
@@ -139,83 +141,85 @@ export function ClassForm(props: ClassFormProps) {
           />
         </div>
 
-        <FormField
-          control={form.control}
-          name="teacherIds"
-          render={({ field }) => {
-            const selectedTeacherIds = field.value ?? []
+        {showTeacherSelection && (
+          <FormField
+            control={form.control}
+            name="teacherIds"
+            render={({ field }) => {
+              const selectedTeacherIds = field.value ?? []
 
-            return (
-              <FormItem>
-                <FormLabel>Professores</FormLabel>
-                <FormControl>
-                  <div className="rounded-md border p-3">
-                    {isTeachersLoading ? (
-                      <p className="text-sm text-muted-foreground">Carregando professores...</p>
-                    ) : null}
+              return (
+                <FormItem>
+                  <FormLabel>Professores</FormLabel>
+                  <FormControl>
+                    <div className="rounded-md border p-3">
+                      {isTeachersLoading ? (
+                        <p className="text-sm text-muted-foreground">Carregando professores...</p>
+                      ) : null}
 
-                    {hasTeachersError ? (
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="text-sm text-destructive">Erro ao carregar professores.</p>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => refetchTeachers()}
-                          disabled={isSubmitting}
-                        >
-                          Tentar novamente
-                        </Button>
-                      </div>
-                    ) : null}
+                      {hasTeachersError ? (
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-sm text-destructive">Erro ao carregar professores.</p>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => refetchTeachers()}
+                            disabled={isSubmitting}
+                          >
+                            Tentar novamente
+                          </Button>
+                        </div>
+                      ) : null}
 
-                    {!isTeachersLoading && !hasTeachersError && teacherOptions.length === 0 ? (
-                      <p className="text-sm text-muted-foreground">Nenhum professor disponível.</p>
-                    ) : null}
+                      {!isTeachersLoading && !hasTeachersError && teacherOptions.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">Nenhum professor disponível.</p>
+                      ) : null}
 
-                    {!isTeachersLoading && !hasTeachersError && teacherOptions.length > 0 ? (
-                      <div className="max-h-56 space-y-2 overflow-y-auto">
-                        {teacherOptions.map((teacher) => {
-                          const isChecked = selectedTeacherIds.includes(teacher.id)
+                      {!isTeachersLoading && !hasTeachersError && teacherOptions.length > 0 ? (
+                        <div className="max-h-56 space-y-2 overflow-y-auto">
+                          {teacherOptions.map((teacher) => {
+                            const isChecked = selectedTeacherIds.includes(teacher.id)
 
-                          return (
-                            <label
-                              key={teacher.id}
-                              className="flex cursor-pointer items-start gap-3 rounded-md border p-2 transition hover:bg-muted/40"
-                            >
-                              <input
-                                type="checkbox"
-                                className="mt-0.5"
-                                checked={isChecked}
-                                disabled={isSubmitting}
-                                onChange={(event) => {
-                                  if (event.target.checked) {
-                                    field.onChange([...selectedTeacherIds, teacher.id])
-                                    return
-                                  }
+                            return (
+                              <label
+                                key={teacher.id}
+                                className="flex cursor-pointer items-start gap-3 rounded-md border p-2 transition hover:bg-muted/40"
+                              >
+                                <input
+                                  type="checkbox"
+                                  className="mt-0.5"
+                                  checked={isChecked}
+                                  disabled={isSubmitting}
+                                  onChange={(event) => {
+                                    if (event.target.checked) {
+                                      field.onChange([...selectedTeacherIds, teacher.id])
+                                      return
+                                    }
 
-                                  field.onChange(selectedTeacherIds.filter((id) => id !== teacher.id))
-                                }}
-                              />
+                                    field.onChange(selectedTeacherIds.filter((id) => id !== teacher.id))
+                                  }}
+                                />
 
-                              <span className="flex flex-col text-sm">
-                                <span className="font-medium text-foreground">{teacher.name}</span>
-                                <span className="text-muted-foreground">
-                                  {teacher.subject?.trim() ? teacher.subject : 'Sem disciplina definida'}
+                                <span className="flex flex-col text-sm">
+                                  <span className="font-medium text-foreground">{teacher.name}</span>
+                                  <span className="text-muted-foreground">
+                                    {teacher.subject?.trim() ? teacher.subject : 'Sem disciplina definida'}
+                                  </span>
                                 </span>
-                              </span>
-                            </label>
-                          )
-                        })}
-                      </div>
-                    ) : null}
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )
-          }}
-        />
+                              </label>
+                            )
+                          })}
+                        </div>
+                      ) : null}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )
+            }}
+          />
+        )}
 
         <Button
           type="submit"

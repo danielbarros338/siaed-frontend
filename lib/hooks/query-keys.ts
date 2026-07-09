@@ -43,4 +43,19 @@ export const queryKeys = {
     admin: () => ['dashboard', 'admin'] as const,
     teacher: (period: string) => ['dashboard', 'teacher', period] as const,
   },
+  classroomManagement: {
+    learningDiagnostics: {
+      all: ['classroom-management', 'learning-diagnostics'] as const,
+      list: (params: object) => ['classroom-management', 'learning-diagnostics', 'list', params] as const,
+    },
+    inclusionProfile: (studentId: string) =>
+      ['classroom-management', 'inclusion-profile', studentId] as const,
+    socioemotionalProfile: (studentId: string) =>
+      ['classroom-management', 'socioemotional-profile', studentId] as const,
+    groupDynamics: (schoolClassId: string) =>
+      ['classroom-management', 'group-dynamics', schoolClassId] as const,
+    classRoutine: (schoolClassId: string) =>
+      ['classroom-management', 'class-routine', schoolClassId] as const,
+    attendance: (params: object) => ['classroom-management', 'attendance', params] as const,
+  },
 }

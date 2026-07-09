@@ -186,12 +186,14 @@ export function TeacherPedagogicoView() {
         </div>
         <div className="flex gap-2 shrink-0">
           <Button
-            disabled
+            asChild
             size="sm"
-            className="text-xs text-white bg-[linear-gradient(135deg,#0066cc_0%,#004aad_100%)] border-0 opacity-50 cursor-not-allowed"
+            className="text-xs text-white bg-[linear-gradient(135deg,#0066cc_0%,#004aad_100%)] border-0"
           >
-            <ClipboardList className="h-3.5 w-3.5 mr-1.5" />
-            Lançar Frequência
+            <Link href="/classes">
+              <ClipboardList className="h-3.5 w-3.5 mr-1.5" />
+              Lançar Frequência
+            </Link>
           </Button>
           <Button asChild variant="outline" size="sm" className="text-xs">
             <Link href="/lesson-plans/new">

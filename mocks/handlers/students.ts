@@ -1,6 +1,7 @@
 import type { DocumentType } from '@/lib/types'
 import { http, HttpResponse } from 'msw'
 import { CLASS_1_ID, MOCK_STUDENT_LIST, MOCK_STUDENTS } from '../data/seed'
+import { makePagedResult } from './utils'
 
 let students = structuredClone(MOCK_STUDENTS)
 let studentList = structuredClone(MOCK_STUDENT_LIST)
@@ -14,21 +15,6 @@ function syncList() {
     className: s.className,
     status: s.status,
   }))
-}
-
-function makePagedResult<T>(items: T[], page: number, pageSize: number) {
-  const start = (page - 1) * pageSize
-  const paged = items.slice(start, start + pageSize)
-  const totalPages = Math.max(1, Math.ceil(items.length / pageSize))
-  return {
-    items: paged,
-    totalCount: items.length,
-    page,
-    pageSize,
-    totalPages,
-    hasNextPage: page < totalPages,
-    hasPreviousPage: page > 1,
-  }
 }
 
 export const studentHandlers = [

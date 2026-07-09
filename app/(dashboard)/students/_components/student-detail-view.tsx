@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { StudentSummaryCard } from '@/features/classroom-management/components/student-summary-card'
 import { InativarDialog, RegistrarEvasaoDialog } from '@/features/students/components/deactivate-dialog'
 import { ReactivateModal } from '@/features/students/components/reactivate-modal'
 import { StudentStatusBadge } from '@/features/students/components/student-status-badge'
@@ -181,6 +182,8 @@ export function StudentDetailView({ id }: StudentDetailViewProps) {
           <p className="text-sm whitespace-pre-wrap">{student.notes}</p>
         </div>
       )}
+
+      <StudentSummaryCard studentId={id} classId={student.classId} />
 
       {canWrite && (
         <>

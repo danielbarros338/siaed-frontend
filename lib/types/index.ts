@@ -14,6 +14,7 @@ export interface AuthResponse {
   name: string
   email: string
   role: UserRole
+  schoolId: string | null
   token: string
   expiresAt: string
 }
@@ -37,6 +38,7 @@ export interface UserSession {
   name: string
   email: string
   role: UserRole
+  schoolId: string | null
 }
 
 export interface ApiErrorResponse {
@@ -210,6 +212,7 @@ export interface SchoolClass {
   schoolYear: number
   status: ClassStatus
   createdAt: string
+  createdBy: string
   teacherIds?: string[]
   teachers?: ClassTeacher[]
 }
@@ -227,6 +230,7 @@ export interface ClassListItem {
   grade: string
   schoolYear: number
   status: ClassStatus
+  createdBy: string
 }
 
 export interface CreateClassDto {
@@ -242,6 +246,7 @@ export interface UpdateClassDto {
   grade: string
   schoolYear: number
   teacherIds?: string[]
+  requestingUserId?: string
 }
 
 export interface TeacherListItem {

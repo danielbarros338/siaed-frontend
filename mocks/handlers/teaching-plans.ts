@@ -1,24 +1,10 @@
 import { http, HttpResponse } from 'msw'
 import { MOCK_TEACHER_ID, MOCK_TEACHING_PLANS, TP_IDS } from '../data/seed'
+import { makePagedResult } from './utils'
 
 const STATUS_MAP: Record<string, number> = { Draft: 1, Published: 2, Archived: 3 }
 
 let teachingPlans = structuredClone(MOCK_TEACHING_PLANS)
-
-function makePagedResult<T>(items: T[], page: number, pageSize: number) {
-  const start = (page - 1) * pageSize
-  const paged = items.slice(start, start + pageSize)
-  const totalPages = Math.max(1, Math.ceil(items.length / pageSize))
-  return {
-    items: paged,
-    totalCount: items.length,
-    page,
-    pageSize,
-    totalPages,
-    hasNextPage: page < totalPages,
-    hasPreviousPage: page > 1,
-  }
-}
 
 function randomId() {
   return crypto.randomUUID()

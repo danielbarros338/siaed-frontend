@@ -8,6 +8,14 @@ import type {
   UserRole,
 } from '@/lib/types'
 import type { TeachingPlanStatus } from '@/features/teaching-plans/types'
+import type {
+  AttendanceEntry,
+  ClassRoutine,
+  GroupDynamics,
+  InclusionProfile,
+  LearningDiagnostic,
+  SocioemotionalProfile,
+} from '@/features/classroom-management/types'
 
 // ─── IDs fixos ────────────────────────────────────────────────────────────────
 export const MOCK_TEACHER_ID = 'aaaaaaaa-0001-0001-0001-aaaaaaaaaaaa'
@@ -16,9 +24,11 @@ export const MOCK_TEACHER_3_ID = 'aaaaaaaa-0003-0003-0003-aaaaaaaaaaaa'
 export const MOCK_SCHOOL_ID = 'bbbbbbbb-0001-0001-0001-bbbbbbbbbbbb'
 
 // JWT com exp: ano 2099 — funciona tanto no cliente (atob) quanto no servidor (Buffer)
+// payload: { sub: MOCK_TEACHER_ID, name: "Professor Demo", email: "demo@escola.edu.br", role: "1", schoolId: null, exp: 4102444800, iat: 1700000000 }
+// Professor autocadastrado (schoolId null) — permissão total sobre o que criar.
 export const MOCK_JWT =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' +
-  '.eyJzdWIiOiJhYWFhYWFhYS0wMDAxLTAwMDEtMDAwMS1hYWFhYWFhYWFhYWEiLCJuYW1lIjoiUHJvZmVzc29yIERlbW8iLCJlbWFpbCI6ImRlbW9AZXNjb2xhLmVkdS5iciIsInJvbGUiOiIxIiwiZXhwIjo0MTAyNDQ0ODAwLCJpYXQiOjE3MDAwMDAwMDB9' +
+  '.eyJzdWIiOiJhYWFhYWFhYS0wMDAxLTAwMDEtMDAwMS1hYWFhYWFhYWFhYWEiLCJuYW1lIjoiUHJvZmVzc29yIERlbW8iLCJlbWFpbCI6ImRlbW9AZXNjb2xhLmVkdS5iciIsInJvbGUiOiIxIiwic2Nob29sSWQiOm51bGwsImV4cCI6NDEwMjQ0NDgwMCwiaWF0IjoxNzAwMDAwMDAwfQ' +
   '.mocksignature'
 
 export const MOCK_USER = {
@@ -26,6 +36,7 @@ export const MOCK_USER = {
   name: 'Professor Demo',
   email: 'demo@escola.edu.br',
   role: 1 as UserRole,
+  schoolId: null,
   token: MOCK_JWT,
   expiresAt: '2099-01-01T00:00:00Z',
 }
@@ -50,6 +61,7 @@ export const MOCK_CLASSES = [
     schoolYear: 2025,
     status: 1 as ClassStatus,
     createdAt: '2025-02-01T08:00:00Z',
+    createdBy: MOCK_TEACHER_ID,
     teacherIds: [MOCK_TEACHER_ID],
     teachers: [{ id: MOCK_TEACHER_ID, teacherId: MOCK_TEACHER_ID, name: 'Professor Demo', subject: 'Matemática' }],
   },
@@ -60,6 +72,7 @@ export const MOCK_CLASSES = [
     schoolYear: 2025,
     status: 1 as ClassStatus,
     createdAt: '2025-02-01T08:00:00Z',
+    createdBy: MOCK_TEACHER_ID,
     teacherIds: [MOCK_TEACHER_ID, MOCK_TEACHER_2_ID],
     teachers: [
       { id: MOCK_TEACHER_ID, teacherId: MOCK_TEACHER_ID, name: 'Professor Demo', subject: 'Matemática' },
@@ -73,6 +86,7 @@ export const MOCK_CLASSES = [
     schoolYear: 2025,
     status: 2 as ClassStatus,
     createdAt: '2025-02-01T08:00:00Z',
+    createdBy: MOCK_TEACHER_3_ID,
     teacherIds: [MOCK_TEACHER_3_ID],
     teachers: [{ id: MOCK_TEACHER_3_ID, teacherId: MOCK_TEACHER_3_ID, name: 'Carlos Oliveira', subject: 'Ciências' }],
   },
@@ -84,6 +98,7 @@ export const MOCK_CLASS_LIST = MOCK_CLASSES.map((c) => ({
   grade: c.grade,
   schoolYear: c.schoolYear,
   status: c.status,
+  createdBy: c.createdBy,
 }))
 
 // ─── Alunos ───────────────────────────────────────────────────────────────────
@@ -589,16 +604,26 @@ export const MOCK_REPORTS = [
 export const MOCK_ADMIN_ID = 'aaaaaaaa-0010-0010-0010-aaaaaaaaaaaa'
 export const MOCK_PEDAGOG_ID = 'aaaaaaaa-0020-0020-0020-aaaaaaaaaaaa'
 
-// role 2 = Diretor | payload: { sub: MOCK_ADMIN_ID, name: "Admin Principal", email: "admin@admin.com", role: "2", exp: 4102444800, iat: 1700000000 }
+// role 2 = Diretor | payload: { sub: MOCK_ADMIN_ID, name: "Admin Principal", email: "admin@admin.com", role: "2", schoolId: null, exp: 4102444800, iat: 1700000000 }
 export const MOCK_ADMIN_JWT =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' +
-  '.eyJzdWIiOiJhYWFhYWFhYS0wMDEwLTAwMTAtMDAxMC1hYWFhYWFhYWFhYWEiLCJuYW1lIjoiQWRtaW4gUHJpbmNpcGFsIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJyb2xlIjoiMiIsImV4cCI6NDEwMjQ0NDgwMCwiaWF0IjoxNzAwMDAwMDAwfQ' +
+  '.eyJzdWIiOiJhYWFhYWFhYS0wMDEwLTAwMTAtMDAxMC1hYWFhYWFhYWFhYWEiLCJuYW1lIjoiQWRtaW4gUHJpbmNpcGFsIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJyb2xlIjoiMiIsInNjaG9vbElkIjpudWxsLCJleHAiOjQxMDI0NDQ4MDAsImlhdCI6MTcwMDAwMDAwMH0' +
   '.mocksignature'
 
-// role 1 = Professor | payload: { sub: MOCK_PEDAGOG_ID, name: "Dra. Helena Silva", email: "pedagogical@pedagogical.com", role: "1", exp: 4102444800, iat: 1700000000 }
+// role 1 = Professor | cadastrado por escola (schoolId = MOCK_SCHOOL_ID) — leitura/edição restrita a diagnósticos, frequência e observações de comportamento.
+// payload: { sub: MOCK_PEDAGOG_ID, name: "Dra. Helena Silva", email: "pedagogical@pedagogical.com", role: "1", schoolId: MOCK_SCHOOL_ID, exp: 4102444800, iat: 1700000000 }
 export const MOCK_PEDAGOG_JWT =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' +
-  '.eyJzdWIiOiJhYWFhYWFhYS0wMDIwLTAwMjAtMDAyMC1hYWFhYWFhYWFhYWEiLCJuYW1lIjoiRHJhLiBIZWxlbmEgU2lsdmEiLCJlbWFpbCI6InBlZGFnb2dpY2FsQHBlZGFnb2dpY2FsLmNvbSIsInJvbGUiOiIxIiwiZXhwIjo0MTAyNDQ0ODAwLCJpYXQiOjE3MDAwMDAwMDB9' +
+  '.eyJzdWIiOiJhYWFhYWFhYS0wMDIwLTAwMjAtMDAyMC1hYWFhYWFhYWFhYWEiLCJuYW1lIjoiRHJhLiBIZWxlbmEgU2lsdmEiLCJlbWFpbCI6InBlZGFnb2dpY2FsQHBlZGFnb2dpY2FsLmNvbSIsInJvbGUiOiIxIiwic2Nob29sSWQiOiJiYmJiYmJiYi0wMDAxLTAwMDEtMDAwMS1iYmJiYmJiYmJiYmIiLCJleHAiOjQxMDI0NDQ4MDAsImlhdCI6MTcwMDAwMDAwMH0' +
+  '.mocksignature'
+
+export const MOCK_SELF_PROFESSOR_ID = 'aaaaaaaa-0030-0030-0030-aaaaaaaaaaaa'
+
+// role 1 = Professor | autocadastrado (schoolId = null) — permissão total sobre o que criar.
+// payload: { sub: MOCK_SELF_PROFESSOR_ID, name: "Prof. Ana Souza", email: "professor@professor.com", role: "1", schoolId: null, exp: 4102444800, iat: 1700000000 }
+export const MOCK_SELF_PROFESSOR_JWT =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' +
+  '.eyJzdWIiOiJhYWFhYWFhYS0wMDMwLTAwMzAtMDAzMC1hYWFhYWFhYWFhYWEiLCJuYW1lIjoiUHJvZi4gQW5hIFNvdXphIiwiZW1haWwiOiJwcm9mZXNzb3JAcHJvZmVzc29yLmNvbSIsInJvbGUiOiIxIiwic2Nob29sSWQiOm51bGwsImV4cCI6NDEwMjQ0NDgwMCwiaWF0IjoxNzAwMDAwMDAwfQ' +
   '.mocksignature'
 
 // ─── Notas ────────────────────────────────────────────────────────────────────
@@ -670,5 +695,151 @@ export const MOCK_GRADES = [
     version: '1',
     createdAt: '2025-03-25T10:10:00Z',
     updatedAt: '2025-03-25T10:10:00Z',
+  },
+]
+
+// ─── Gestão de Turma — Diagnóstico de Aprendizagem ────────────────────────────
+export const LEARNING_DIAGNOSTIC_IDS = [
+  '99999999-0001-0001-0001-999999999999',
+  '99999999-0002-0002-0002-999999999999',
+  '99999999-0003-0003-0003-999999999999',
+]
+
+export const MOCK_LEARNING_DIAGNOSTICS: LearningDiagnostic[] = [
+  {
+    id: LEARNING_DIAGNOSTIC_IDS[0],
+    studentId: STUDENT_IDS[0],
+    schoolClassId: CLASS_1_ID,
+    authorId: MOCK_TEACHER_ID,
+    subject: 'Matemática',
+    proficiencyLevel: 1,
+    identifiedGaps: 'Nenhuma lacuna relevante identificada.',
+    assessmentDate: '2026-03-01T00:00:00Z',
+    notes: null,
+    createdAt: '2026-03-01T10:00:00Z',
+    updatedAt: '2026-03-01T10:00:00Z',
+  },
+  {
+    id: LEARNING_DIAGNOSTIC_IDS[1],
+    studentId: STUDENT_IDS[1],
+    schoolClassId: CLASS_1_ID,
+    authorId: MOCK_TEACHER_ID,
+    subject: 'Matemática',
+    proficiencyLevel: 3,
+    identifiedGaps: 'Dificuldade em frações equivalentes e conversão para decimais.',
+    assessmentDate: '2026-03-01T00:00:00Z',
+    notes: 'Recomenda-se reforço com material concreto.',
+    createdAt: '2026-03-01T10:10:00Z',
+    updatedAt: '2026-03-01T10:10:00Z',
+  },
+  {
+    id: LEARNING_DIAGNOSTIC_IDS[2],
+    studentId: STUDENT_IDS[3],
+    schoolClassId: CLASS_2_ID,
+    authorId: MOCK_TEACHER_ID,
+    subject: 'Português',
+    proficiencyLevel: 2,
+    identifiedGaps: 'Interpretação de textos mais longos ainda em desenvolvimento.',
+    assessmentDate: '2026-03-05T00:00:00Z',
+    notes: null,
+    createdAt: '2026-03-05T09:00:00Z',
+    updatedAt: '2026-03-05T09:00:00Z',
+  },
+]
+
+// ─── Gestão de Turma — Perfil de Inclusão / PEI ───────────────────────────────
+export const MOCK_INCLUSION_PROFILES: InclusionProfile[] = [
+  {
+    studentId: STUDENT_IDS[1],
+    hasSpecialNeeds: true,
+    condition: 1,
+    conditionDescription: null,
+    hasMedicalReport: true,
+    medicalReportDate: '2025-08-10T00:00:00Z',
+    curricularAdaptations: 'Tempo estendido em avaliações e apoio visual para organização das tarefas.',
+    needsAEE: true,
+    nextPeiReviewDate: '2026-06-01T00:00:00Z',
+    updatedBy: MOCK_TEACHER_ID,
+    updatedAt: '2026-03-01T10:00:00Z',
+  },
+]
+
+// ─── Gestão de Turma — Perfil Socioemocional ───────────────────────────────────
+export const MOCK_SOCIOEMOTIONAL_PROFILES: SocioemotionalProfile[] = [
+  {
+    studentId: STUDENT_IDS[0],
+    familyContext: 'Reside com os pais e uma irmã mais nova. Ambiente familiar estável.',
+    engagementLevel: 3,
+    behaviorNotes: 'Participativa, colabora com os colegas e demonstra empatia.',
+    updatedBy: MOCK_TEACHER_ID,
+    updatedAt: '2026-03-01T10:00:00Z',
+  },
+  {
+    studentId: STUDENT_IDS[1],
+    familyContext: 'Mora com a avó; pais ausentes durante a semana por motivo de trabalho.',
+    engagementLevel: 2,
+    behaviorNotes: 'Costuma se dispersar em atividades longas, mas responde bem a incentivo individual.',
+    updatedBy: MOCK_TEACHER_ID,
+    updatedAt: '2026-03-01T10:10:00Z',
+  },
+]
+
+// ─── Gestão de Turma — Dinâmica de Grupo ───────────────────────────────────────
+export const MOCK_GROUP_DYNAMICS: GroupDynamics[] = [
+  {
+    schoolClassId: CLASS_1_ID,
+    identifiedLeaders: [{ studentId: STUDENT_IDS[0], studentName: 'Beatriz Almeida' }],
+    conflictsNotes: 'Nenhum conflito relevante registrado neste bimestre.',
+    workPreference: 2,
+    updatedBy: MOCK_TEACHER_ID,
+    updatedAt: '2026-03-01T10:00:00Z',
+  },
+]
+
+// ─── Gestão de Turma — Rotina e Combinados ─────────────────────────────────────
+export const MOCK_CLASS_ROUTINES: ClassRoutine[] = [
+  {
+    schoolClassId: CLASS_1_ID,
+    dailyRoutineDescription:
+      'Acolhida (10min) → Leitura compartilhada (20min) → Conteúdo principal (50min) → Intervalo → Atividades dirigidas (50min) → Roda de encerramento (10min).',
+    agreements: [
+      'Levantar a mão para falar',
+      'Respeitar a vez dos colegas',
+      'Cuidar dos materiais coletivos',
+      'Ajudar a organizar a sala antes de sair',
+    ],
+    updatedBy: MOCK_TEACHER_ID,
+    updatedAt: '2026-03-01T10:00:00Z',
+  },
+]
+
+// ─── Gestão de Turma — Frequência Diária ───────────────────────────────────────
+export const ATTENDANCE_IDS = [
+  '88888888-0001-0001-0001-888888888888',
+  '88888888-0002-0002-0002-888888888888',
+]
+
+export const MOCK_ATTENDANCE: AttendanceEntry[] = [
+  {
+    id: ATTENDANCE_IDS[0],
+    schoolClassId: CLASS_1_ID,
+    studentId: STUDENT_IDS[0],
+    date: '2026-03-10T00:00:00Z',
+    status: 1,
+    notes: null,
+    recordedBy: MOCK_TEACHER_ID,
+    createdAt: '2026-03-10T08:00:00Z',
+    updatedAt: '2026-03-10T08:00:00Z',
+  },
+  {
+    id: ATTENDANCE_IDS[1],
+    schoolClassId: CLASS_1_ID,
+    studentId: STUDENT_IDS[1],
+    date: '2026-03-10T00:00:00Z',
+    status: 3,
+    notes: 'Atestado médico apresentado.',
+    recordedBy: MOCK_TEACHER_ID,
+    createdAt: '2026-03-10T08:00:00Z',
+    updatedAt: '2026-03-10T08:00:00Z',
   },
 ]

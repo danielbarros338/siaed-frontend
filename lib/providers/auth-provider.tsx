@@ -29,6 +29,7 @@ function resolveInitialAuthState(): AuthState {
     name: payload.name ?? '',
     email: payload.email ?? '',
     role: Number(payload.role) as UserSession['role'],
+    schoolId: payload.schoolId ?? null,
   }
 
   return { user, isAuthenticated: true, isLoading: false }

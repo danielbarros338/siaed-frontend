@@ -19,10 +19,11 @@ import Link from 'next/link'
 interface ClassesTableProps {
   data: ClassListItem[]
   isLoading: boolean
-  canWrite: boolean
+  canWrite: (classItem: ClassListItem) => boolean
+  canInsert: boolean
 }
 
-export function ClassesTable({ data, isLoading, canWrite }: ClassesTableProps) {
+export function ClassesTable({ data, isLoading, canWrite, canInsert }: ClassesTableProps) {
   if (isLoading) {
     return (
       <div className="space-y-2">
@@ -34,7 +35,7 @@ export function ClassesTable({ data, isLoading, canWrite }: ClassesTableProps) {
   }
 
   if (data.length === 0) {
-    return <ClassesEmptyState canWrite={canWrite} />
+    return <ClassesEmptyState canWrite={canInsert} />
   }
 
   return (
@@ -55,7 +56,7 @@ export function ClassesTable({ data, isLoading, canWrite }: ClassesTableProps) {
               <ClassStatusBadge status={classItem.status} />
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
-              {canWrite && (
+              {canWrite(classItem) && (
                 <Button asChild variant="secondary" size="sm">
                   <Link href={`/classes/${classItem.id}/edit`}>
                     <Pencil className="mr-2 size-4" />
@@ -101,7 +102,7 @@ export function ClassesTable({ data, isLoading, canWrite }: ClassesTableProps) {
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
-                    {canWrite && (
+                    {canWrite(classItem) && (
                       <Button asChild variant="secondary" size="sm">
                         <Link href={`/classes/${classItem.id}/edit`}>
                           <Pencil className="mr-2 size-4" />

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ClassesTable } from '@/features/classes/components/classes-table'
 import { useClasses } from '@/features/classes/hooks/use-classes'
+import { canCreateClass, canManageClass } from '@/features/classes/utils/class-permissions'
 import { useCurrentUser } from '@/lib/hooks/use-current-user'
 import { useDebounce } from '@/lib/hooks/use-debounce'
 import axios from 'axios'
@@ -18,7 +19,7 @@ export function ClassesView() {
   const [search, setSearch] = useState('')
 
   const { user } = useCurrentUser()
-  const canWrite = user?.role === 2 || user?.role === 3
+  const canInsert = canCreateClass(user)
   const debouncedSearch = useDebounce(search, 300)
   const normalizedSearch = useMemo(() => debouncedSearch.trim(), [debouncedSearch])
 
@@ -41,7 +42,7 @@ export function ClassesView() {
           <p className="text-sm text-muted-foreground">Gerencie as turmas cadastradas no sistema.</p>
         </div>
 
-        {canWrite && (
+        {canInsert && (
           <Button asChild className="text-white bg-[linear-gradient(135deg,#d97706_0%,#b45309_100%)] border-0 hover:opacity-90">
             <Link href="/classes/new">Inserir turma</Link>
           </Button>
@@ -80,7 +81,12 @@ export function ClassesView() {
           </div>
         )
       ) : (
-        <ClassesTable data={data?.items ?? []} isLoading={isLoading} canWrite={canWrite} />
+        <ClassesTable
+          data={data?.items ?? []}
+          isLoading={isLoading}
+          canWrite={(classItem) => canManageClass(user, classItem)}
+          canInsert={canInsert}
+        />
       )}
 
       {data && data.totalPages > 1 && (
